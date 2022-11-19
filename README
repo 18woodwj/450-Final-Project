@@ -1,1 +1,5 @@
-Hi friends, this is the README for our final project
+Data sources:
+Songs: https://www.kaggle.com/datasets/rodolfofigueroa/spotify-12m-songs
+Charts: https://www.kaggle.com/datasets/dhruvildave/spotify-charts
+
+Join is on IDs; for the Charts dataset, this was extracted from the URL
