@@ -45,3 +45,18 @@ CREATE TABLE Saved_Songs (
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
     FOREIGN KEY (song_id) REFERENCES Songs(id)
 );
+
+INSERT INTO Users(user_id, email)
+VALUES
+    (1, "isk@mail.cz"),
+    (2, "vas@yahoo.com"),
+    (3, "cyn@gmail.com"),
+    (4, "wooddog@gmail.com");
+
+INSERT INTO Saved_Songs(user_id, song_id)
+VALUES
+    (1, "000JJAuQyGXgrkPCaiZhu5"),
+    (1, "000tOaXqLPh2Vce0YOpcui"),
+    (2, "000w0ArJhkqt1KIoaCO9l6"),
+    (3, "000JJAuQyGXgrkPCaiZhu5"),
+    (3, "000B6fUCVkSThxEbewDZ8r");
