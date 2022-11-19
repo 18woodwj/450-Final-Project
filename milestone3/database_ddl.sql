@@ -28,9 +28,8 @@ CREATE TABLE Charting (
     region VARCHAR(30),
     chart VARCHAR(7),
     trend VARCHAR(9),
-    streams INT(32),
     chart_date DATE,
-    PRIMARY KEY (song_id)
+    PRIMARY KEY (song_id, chart_date, chart, region)
 );
 
 CREATE TABLE Users (
