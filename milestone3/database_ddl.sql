@@ -35,6 +35,7 @@ CREATE TABLE Charting (
 CREATE TABLE Users (
     user_id INT(32),
     email VARCHAR(100),
+    region VARCHAR(30),
     PRIMARY KEY (user_id)
 );
 
@@ -46,12 +47,20 @@ CREATE TABLE Saved_Songs (
     FOREIGN KEY (song_id) REFERENCES Songs(id)
 );
 
-INSERT INTO Users(user_id, email)
+CREATE TABLE Friends (
+    f1_id INT(32),
+    f2_id INT(32),
+    PRIMARY KEY (f1_id, f2_id),
+    FOREIGN KEY (f1_id) REFERENCES Users(user_id),
+    FOREIGN KEY (f2_id) REFERENCES Users(user_id)
+);
+
+INSERT INTO Users(user_id, email, region)
 VALUES
-    (1, "isk@mail.cz"),
-    (2, "vas@yahoo.com"),
-    (3, "cyn@gmail.com"),
-    (4, "wooddog@gmail.com");
+    (1, "isk@mail.cz", "Czech Republic"),
+    (2, "vas@yahoo.com", "United States"),
+    (3, "cyn@gmail.com", "United States"),
+    (4, "wooddog@gmail.com", "Egypt");
 
 INSERT INTO Saved_Songs(user_id, song_id)
 VALUES
@@ -60,3 +69,10 @@ VALUES
     (2, "000w0ArJhkqt1KIoaCO9l6"),
     (3, "000JJAuQyGXgrkPCaiZhu5"),
     (3, "000B6fUCVkSThxEbewDZ8r");
+
+INSERT INTO Friends(f1_id, f2_id)
+VALUES
+    (1, 2),
+    (2, 1),
+    (1, 3),
+    (3, 1);
