@@ -73,6 +73,86 @@ async function charts(req, res) {
  */
 async function wrapped(req, res) {
     //TODO: John
+    req.session.user_id = 3
+    t_results = []
+    connection.query(
+        `SELECT SS.user_id, SUBSTRING_INDEX(S.artists, ',', 1) as main_artist, COUNT(S.id) as num FROM Saved_Songs SS
+        JOIN Songs S  ON S.id = SS.song_id
+        WHERE SS.user_id = ${req.session.user_id}
+        GROUP BY main_artist
+        ORDER BY num DESC
+        LIMIT 3`, function(error, results, fields) {
+            if (error) {
+                res.json({error: error})
+            } else if (results) {
+                t_results.push({artists: results});
+                connection.query(
+                    `
+                    WITH u_friends AS (
+                        SELECT U.user_id, F.f2_id as friend FROM Users U
+                            JOIN Friends F on U.user_id = F.f1_id
+                        WHERE U.user_id = 3
+                    ),
+                    
+                    avg_f_atr AS (
+                        (SELECT UF.friend AS user, avg(liveness) AS avg_l, avg(energy) AS avg_e, avg(danceability) AS avg_d, avg(acousticness) AS avg_a
+                        FROM u_friends UF
+                            JOIN Saved_Songs SS ON SS.user_id = UF.friend
+                            JOIN Songs S on S.id = SS.song_id
+                        GROUP BY friend)
+                        UNION
+                        (SELECT U.user_id, avg(liveness) AS avg_l, avg(energy) AS avg_e, avg(danceability) AS avg_d, avg(acousticness) AS avg_a
+                        FROM Users U
+                            JOIN Saved_Songs SS ON SS.user_id = U.user_id
+                            JOIN Songs S ON S.id = SS.song_id
+                        WHERE U.user_id = 3
+                        GROUP BY U.user_id
+                        )
+                    )
+                    
+                    SELECT * FROM (
+                        SELECT *,  PERCENT_RANK() over (ORDER BY avg_l) AS  percent_l,
+                           PERCENT_RANK() over (ORDER BY avg_e) AS  percent_e,
+                           PERCENT_RANK() over (ORDER BY avg_d) AS  percent_d,
+                           PERCENT_RANK() over (ORDER BY avg_a) AS  percent_a
+                           FROM avg_f_atr AS afa
+                                  ) AS total_p
+                    WHERE user = 3
+
+
+                    `, function (error, results, fields) {
+                        if (error) {
+                            res.json({error: error});
+                        } else if (results) {
+                            t_results.push({percentiles: results});
+                            connection.query(
+                                `
+                                SELECT SS.user_id, avg(liveness) AS avg_l, avg(energy) AS avg_e, avg(danceability) AS avg_d, avg(acousticness) AS avg_a
+                                FROM Saved_Songs SS
+                                    JOIN Songs S ON S.id = SS.song_id
+                                WHERE SS.user_id = 3
+                                GROUP BY SS.user_id
+                                
+                                `, function (error, results, fields) {
+                                    if (error) {
+                                        res.json({error: error});
+                                    } else if (results) {
+                                        t_results.push({avg_song_atr: results})
+                                        res.json(t_results);
+                                    }
+
+                                }
+                            );
+                            
+
+
+                        }
+
+                    }
+                );
+
+            }
+        });
 
 }
 
