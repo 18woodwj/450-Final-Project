@@ -1,10 +1,10 @@
-    # replace hardcoded 1 with session
+# replace hardcoded 1 with session
 
-    # id, name, artists, album, explicit, danceability, energy, song_key,loudness,
-    # speechiness, acousticness, instrumentalness, liveness, valence, tempo, duration_ms, year
+# id, name, artists, album, explicit, danceability, energy, song_key,loudness,
+# speechiness, acousticness, instrumentalness, liveness, valence, tempo, duration_ms, year
 
 # get users that are not a user's friends
-# we could add their preferences here too
+# COULD ADD THEIR PREFERENCES TOO
 SELECT email
 FROM Users U
 WHERE NOT EXISTS (
@@ -14,23 +14,29 @@ WHERE NOT EXISTS (
 ) AND U.user_id <> 1
 LIMIT 20;
 
-# SHOW 20 SONGS WITH SOME CRITERIUM
-WITH current_region AS (
-    SELECT region AS curr
-    FROM Users
-    WHERE user_id = 1
-),
-    non_randomly_ordered AS (
-    SELECT *
-    FROM Songs S
-        JOIN Charting C on S.id = C.song_id
-        JOIN current_region ON C.region = current_region.curr
+# recommend a bunch of songs that charted from your region that
+# you have not saved that have a certain mood
+WITH charting_sample AS (
+    SELECT DISTINCT song_id
+    FROM Charting C
+    WHERE region = # your region
+    LIMIT 1000
 )
-    SELECT DISTINCT N.name AS 'Song', N.artists AS 'Artists',
-                    N.album AS 'Album', RIGHT(SEC_TO_TIME(ROUND(N.duration_ms / 1000, 0)), 5)
-                    AS Duration
-    FROM non_randomly_ordered N
-    JOIN (SELECT N2.id FROM non_randomly_ordered N2 ORDER BY RAND() LIMIT 20) AS R ON N.id = R.id;
+SELECT name, artists, album,
+       RIGHT(SEC_TO_TIME(ROUND(duration_ms / 1000, 0)), 5) AS Duration
+FROM Songs S
+JOIN charting_sample CS ON S.id = CS.song_id
+WHERE NOT EXISTS (SELECT song_id
+                  FROM Saved_Songs SS
+                  WHERE SS.user_id = 1 AND S.id = SS.song_id)
+WHERE # mood condition
+ORDER BY RAND() LIMIT 20;
+
+CREATE INDEX charting_id_idx
+ON Charting (song_id);
+
+CREATE INDEX main_song_attrs
+ON Songs (name, artists, album, duration_ms);
 
 # same query but noy-otpmized: 42s
 WITH current_region AS (

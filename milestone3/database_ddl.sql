@@ -1,6 +1,12 @@
 CREATE DATABASE SPOTIFY_DB;
 USE SPOTIFY_DB;
 
+CREATE INDEX charting_id_idx
+ON Charting (song_id);
+
+CREATE INDEX main_song_attrs
+ON Songs (name, artists, album, duration_ms);
+
 CREATE TABLE Songs (
     id VARCHAR(50),
     name VARCHAR(255),
