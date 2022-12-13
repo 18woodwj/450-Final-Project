@@ -10,25 +10,30 @@ import {
 class MenuBar extends React.Component {
     render() {
         return(
-            <Navbar type="dark" theme="primary" expand="md">
-        <NavbarBrand href="/">CIS 550 FIFA</NavbarBrand>
+      <Navbar type="dark" theme="primary" expand="md">
+        <NavbarBrand href="/">Spotify Helper</NavbarBrand>
           <Nav navbar>
           <NavItem>
-              <NavLink active href="/">
-                Home
-              </NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink active href="/players">
-                Players
-              </NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink active  href="/matches" >
-                Matches
-              </NavLink>
-            </NavItem>
-          </Nav>
+            <NavLink active href="/songs">
+              Songs
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink active  href="/saved" >
+              Matches
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink active href="/charts">
+              Songs
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink active href="/wrapped">
+              Songs
+            </NavLink>
+          </NavItem>
+        </Nav>
       </Navbar>
         )
     }
