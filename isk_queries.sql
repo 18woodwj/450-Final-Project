@@ -52,3 +52,8 @@ WITH current_region AS (
     JOIN current_region ON C.region = current_region.curr
 ORDER BY RAND()
 LIMIT 20;
+
+SELECT name, artists, album,
+       RIGHT(SEC_TO_TIME(ROUND(duration_ms / 1000, 0)), 5) AS Duration
+FROM Songs S JOIN Saved_Songs SS on S.id = SS.song_id
+WHERE SS.user_id = 1 # AND mood
