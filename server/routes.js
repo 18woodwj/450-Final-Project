@@ -57,6 +57,7 @@ async function login(req, res) {
  * Grab a selection of songs anmd sort by category
  */
 async function songs(req, res) {
+    //TODO Isk
     
 
 }
@@ -69,6 +70,7 @@ async function songs(req, res) {
  * 
  */
 async function charts(req, res) {
+    //TODO: Cynth
 
 }
 
@@ -77,22 +79,17 @@ async function charts(req, res) {
  * 
  */
 async function wrapped(req, res) {
+    //TODO: John
 
 }
 
-/**
- * 
- * 
- */
-async function song(req,res) {
-
-}
 
 /**
  * 
  * 
  */
 async function saved(req, res) {
+    //TODO: Isk
 
 }
 
@@ -100,6 +97,7 @@ async function saved(req, res) {
  * 
  */
 async function blend(req, res) {
+    //TODO: John
 
 }
 
