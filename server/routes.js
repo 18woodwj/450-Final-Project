@@ -26,8 +26,8 @@ async function songs(req, res) {
     req.session.user_region = "Argentina"
 
     happy = "danceability >= 0.6 AND energy >= 0.6 AND liveness >= 0.21"
-    sad = "liveness < 0.19 AND acousticness > 0.34 AND energy < 0.55 AND danceability < 0.50"
-    angry = ""
+    sad = "liveness < 0.19 AND energy < 0.55 AND danceability < 0.50"
+    think = "energy < 0.5"
     dance = "danceability > 0.60 AND liveness > 0.23"
 
     connection.query(`
@@ -35,7 +35,7 @@ async function songs(req, res) {
         SELECT DISTINCT song_id
         FROM Charting C
         WHERE region = '${req.session.user_region}'
-        LIMIT 1000
+        LIMIT 2000
     )
     SELECT name, artists, album,
            RIGHT(SEC_TO_TIME(ROUND(duration_ms / 1000, 0)), 5) AS Duration
@@ -44,7 +44,7 @@ async function songs(req, res) {
     WHERE NOT EXISTS (SELECT song_id
                       FROM Saved_Songs SS
                       WHERE SS.user_id = ${req.session.user_id} AND S.id = SS.song_id)
-    AND ${sad}
+    AND ${dance}
     ORDER BY RAND() 
     LIMIT 20`, function (error, results, fields) {
         if (error) {
@@ -82,7 +82,7 @@ async function wrapped(req, res) {
  * 
  */
 async function saved(req, res) {
-    //TODO: Isk
+    
 
 }
 
