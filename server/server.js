@@ -12,28 +12,23 @@ const app = express();
 app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }));
 
 // Route 1 - register as GET 
-app.get('/hello', routes.hello)
+app.get('/login', routes.login)
 
 // Route 2 - register as GET 
-app.get('/jersey/:choice', routes.jersey)
+app.get('/songs', routes.songs)
 
 // Route 3 - register as GET 
-app.get('/matches/:league', routes.all_matches)
+app.get('/saved', routes.saved)
 
 // Route 4 - register as GET 
-app.get('/players', routes.all_players)
+app.get('/charts', routes.charts)
 
 // Route 5 - register as GET 
-app.get('/match', routes.match)
+app.get('/blend', routes.blend)
 
 // Route 6 - register as GET 
-app.get('/player', routes.player)
+app.get('/wrapped', routes.wrapped)
 
-// Route 7 - register as GET 
-app.get('/search/matches', routes.search_matches)
-
-// Route 8 - register as GET 
-app.get('/search/players', routes.search_players)
 
 
 

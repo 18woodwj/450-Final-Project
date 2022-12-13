@@ -1,8 +1,8 @@
 {
-    "rds_host": "",
+    "rds_host": "spotify-db.c3vrtew1hwvb.us-east-1.rds.amazonaws.com",
     "rds_port": "3306",
-    "rds_user": "",
-    "rds_password" : "",
+    "rds_user": "spotifydb",
+    "rds_password" : "neuralnetworktocreatesongs",
     "rds_db": "",
     "server_host": "127.0.0.1",
     "server_port":"8080"
