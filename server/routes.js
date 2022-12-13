@@ -1,11 +1,13 @@
 const config = require('./config.json')
 const mysql = require('mysql');
 const express = require('express');
-const session = require('express-session');
+// const session = require('express-session');
 
-const app = express();
-app.use(express.urlencoded());
-app.use(session({secret : 'innit mate', user_id : 1}));
+// const app = express();
+// app.use(express.urlencoded());
+// app.use(session({resave: false,
+//     saveUninitialized: true,
+//     secret: "anyrandomstring",}));
 
 const connection = mysql.createConnection({
     host: config.rds_host,

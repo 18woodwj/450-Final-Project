@@ -7,6 +7,11 @@ const routes = require('./routes')
 const config = require('./config.json')
 
 const app = express();
+const session = require('express-session');
+
+app.use(session({resave: false,
+    saveUninitialized: true,
+    secret: "anyrandomstring",}));
 
 // whitelist localhost 3000
 app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }));
