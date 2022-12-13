@@ -1,6 +1,11 @@
 const config = require('./config.json')
 const mysql = require('mysql');
-const e = require('express');
+const express = require('express');
+const session = require('express-session');
+
+const app = express();
+app.use(express.urlencoded());
+app.use(session({secret : 'innit mate', user_id : 1}));
 
 const connection = mysql.createConnection({
     host: config.rds_host,
@@ -10,40 +15,6 @@ const connection = mysql.createConnection({
     database: config.rds_db
 });
 connection.connect();
-
-
-// EXAMPLE
-
-// async function all_matches(req, res) {
-//     // TODO: TASK 4: implement and test, potentially writing your own (ungraded) tests
-//     // We have partially implemented this function for you to 
-//     // parse in the league encoding - this is how you would use the ternary operator to set a variable to a default value
-//     // we didn't specify this default value for league, and you could change it if you want! 
-//     // in reality, league will never be undefined since URLs will need to match matches/:league for the request to be routed here... 
-//     const league = req.params.league ? req.params.league : 'D1'
-//     // use this league encoding in your query to furnish the correct results
-
-//     if (req.query.page && !isNaN(req.query.page)) {
-//         // This is the case where page is defined.
-//         // The SQL schema has the attribute OverallRating, but modify it to match spec! 
-//         // TODO: query and return results here:
-   
-//     } else {
-//         // we have implemented this for you to see how to return results by querying the database
-//         connection.query(`SELECT MatchId, Date, Time, HomeTeam AS Home, AwayTeam AS Away, FullTimeGoalsH AS HomeGoals, FullTimeGoalsA AS AwayGoals  
-//         FROM Matches 
-//         WHERE Division = '${league}'
-//         ORDER BY HomeTeam, AwayTeam`, function (error, results, fields) {
-
-//             if (error) {
-//                 console.log(error)
-//                 res.json({ error: error })
-//             } else if (results) {
-//                 res.json({ results: results })
-//             }
-//         });
-//     }
-// }
 
 /**
  * Check if the userm exists, 
@@ -57,9 +28,17 @@ async function login(req, res) {
  * Grab a selection of songs anmd sort by category
  */
 async function songs(req, res) {
-    //TODO Isk
-    
-
+    console.log(req.session);
+    // connection.query(`SELECT PlayerId, Name, Nationality, OverallRating AS Rating, Potential, Club, Value  
+    // FROM Players 
+    // ORDER BY Name
+    // LIMIT ${req.query.page * pagesize - pagesize}, ${pagesize}`, function (error, results, fields) {
+    //     if (error) {
+    //         res.json({ error: error })
+    //     } else if (results) {
+    //         res.json({ results: results })
+    //     }
+    // });
 }
 
 /**
