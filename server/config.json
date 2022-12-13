@@ -3,7 +3,7 @@
     "rds_port": "3306",
     "rds_user": "spotifydb",
     "rds_password" : "neuralnetworktocreatesongs",
-    "rds_db": "",
+    "rds_db": "SPOTIFY_DB",
     "server_host": "127.0.0.1",
     "server_port":"8080"
 }
