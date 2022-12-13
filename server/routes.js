@@ -10,6 +10,11 @@ const connection = mysql.createConnection({
 });
 connection.connect();
 
+const happy = "danceability >= 0.6 AND energy >= 0.6 AND liveness >= 0.21"
+const sad = "liveness < 0.19 AND energy < 0.55 AND danceability < 0.50"
+const think = "energy < 0.5"
+const dance = "danceability > 0.60 AND liveness > 0.23"
+
 /**
  * Check if the userm exists, 
  * if so redirect to songs page else flag unident user
@@ -25,12 +30,10 @@ async function songs(req, res) {
     req.session.user_id = 1
     req.session.user_region = "Argentina"
 
-    happy = "danceability >= 0.6 AND energy >= 0.6 AND liveness >= 0.21"
-    sad = "liveness < 0.19 AND energy < 0.55 AND danceability < 0.50"
-    think = "energy < 0.5"
-    dance = "danceability > 0.60 AND liveness > 0.23"
+    // store results: recommended songs for mood as well as suggested users
+    t_results = []
 
-    connection.query(`
+    const leading_string = `
     WITH charting_sample AS (
         SELECT DISTINCT song_id
         FROM Charting C
@@ -44,13 +47,53 @@ async function songs(req, res) {
     WHERE NOT EXISTS (SELECT song_id
                       FROM Saved_Songs SS
                       WHERE SS.user_id = ${req.session.user_id} AND S.id = SS.song_id)
-    AND ${dance}
-    ORDER BY RAND() 
-    LIMIT 20`, function (error, results, fields) {
+                      `
+
+    const trailing_string = `ORDER BY RAND() 
+    LIMIT 20`
+
+    connection.query(leading_string + `AND ${dance}` + trailing_string, function (error, results, fields) {
         if (error) {
             res.json({ error: error })
         } else if (results) {
-            res.json({ results: results })
+            t_results.push({dance: results});
+            connection.query(leading_string + `AND ${sad}` + trailing_string, function (error, results, fields) {
+                if (error) {
+                    res.json({ error: error })
+                } else if (results) {
+                    t_results.push({sad: results});
+                    connection.query(leading_string + `AND ${think}` + trailing_string, function (error, results, fields) {
+                        if (error) {
+                            res.json({ error: error })
+                        } else if (results) {
+                            t_results.push({think: results});
+                            connection.query(leading_string + `AND ${happy}` + trailing_string, function (error, results, fields) {
+                                if (error) {
+                                    res.json({ error: error })
+                                } else if (results) {
+                                    t_results.push({friends: results});
+                                    connection.query(`
+                                        SELECT email
+                                        FROM Users U
+                                        WHERE NOT EXISTS (
+                                            SELECT f2_id
+                                            FROM Friends F
+                                            WHERE F.f1_id = 1 AND U.user_id = F.f2_id
+                                        ) AND U.user_id <> ${req.session.user_id}
+                                        LIMIT 20`, function (error, results, fields) {
+                                        if (error) {
+                                            res.json({ error: error })
+                                        } else if (results) {
+                                            t_results.push({happy: results});
+                                            res.json({ results: t_results })
+                                        }
+                                    })
+                                }
+                            });    
+                        }
+                    });
+                }
+            });
         }
     });
 }
@@ -162,8 +205,23 @@ async function wrapped(req, res) {
  * 
  */
 async function saved(req, res) {
-    
+    req.session.user_id = 1
+    req.session.user_region = "Argentina"
 
+    // case on mood
+
+
+    connection.query(`
+    SELECT name, artists, album,
+    RIGHT(SEC_TO_TIME(ROUND(duration_ms / 1000, 0)), 5) AS Duration
+    FROM Songs S JOIN Saved_Songs SS on S.id = SS.song_id
+    WHERE SS.user_id = ${req.session.user_id}`, function (error, results, fields) {
+        if (error) {
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }
+    });    
 }
 
 /**
