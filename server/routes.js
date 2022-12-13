@@ -116,7 +116,7 @@ async function charts(req, res) {
  */
 async function wrapped(req, res) {
     //TODO: John
-    req.session.user_id = 3
+    req.session.user_id = 3 // to replace later with a response object
     t_results = []
     connection.query(
         `SELECT SS.user_id, SUBSTRING_INDEX(S.artists, ',', 1) as main_artist, COUNT(S.id) as num FROM Saved_Songs SS
@@ -127,7 +127,8 @@ async function wrapped(req, res) {
         LIMIT 3`, function(error, results, fields) {
             if (error) {
                 res.json({error: error})
-            } else if (results) {
+            } else {
+                // check if results are null on the front end
                 t_results.push({artists: results});
                 connection.query(
                     `
@@ -166,7 +167,8 @@ async function wrapped(req, res) {
                     `, function (error, results, fields) {
                         if (error) {
                             res.json({error: error});
-                        } else if (results) {
+                        } else {
+                            // check if results are null on the front end
                             t_results.push({percentiles: results});
                             connection.query(
                                 `
@@ -179,17 +181,39 @@ async function wrapped(req, res) {
                                 `, function (error, results, fields) {
                                     if (error) {
                                         res.json({error: error});
-                                    } else if (results) {
-                                        t_results.push({avg_song_atr: results})
-                                        res.json(t_results);
-                                    }
+                                    } else {
+                                        // check if results are null on the front end
+                                        t_results.push({avg_song_atr: results});
+                                        connection.query(
+                                            `
+                                            SELECT name, Count(region) AS num_regions, min(m_rank) as min_rank FROM (
+                                                SELECT name, region, min(song_rank) as m_rank FROM (
+                                                    SELECT name, region, song_rank FROM Saved_Songs SS
+                                                    JOIN Songs S ON SS.song_id = S.id
+                                                    JOIN Charting C ON C.song_id = S.id
+                                                    WHERE SS.user_id = 3) AS ss_chart
+                                                GROUP BY name, region
+                                                ORDER BY m_rank DESC) AS num_r_m
+                                            GROUP BY name
 
+
+                                            `, function (error, results, fields) {
+                                                if (error) {
+                                                    res.json({error: error})
+                                                } else {
+                                                    t_results.push({chart_regions: results});
+                                                    console.log(t_results);
+                                                    res.json(t_results);
+
+                                                }
+                                            }
+                                        )
+
+                                    } 
                                 }
                             );
                             
-
-
-                        }
+                        } 
 
                     }
                 );
