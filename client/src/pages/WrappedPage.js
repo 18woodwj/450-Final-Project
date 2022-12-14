@@ -110,7 +110,6 @@ class WrappedPage extends React.Component {
   // Populate data
   componentDidMount() {
     getWrapped().then(res => {
-      console.log(res)
       this.setState({ artists: res[0].artists})
       this.setState({ percentiles: res[1].percentiles})
       this.setState({ avg_song_atr: res[2].avg_song_atr })
@@ -126,7 +125,6 @@ class WrappedPage extends React.Component {
     return (
       <div>
         <MenuBar />
-
       <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3>Just how popular were your songs?</h3>
         <Table dataSource={this.state.chart_regions} columns={regionColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>

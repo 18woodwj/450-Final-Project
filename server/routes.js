@@ -96,7 +96,7 @@ async function songs(req, res) {
                         if (error) {
                             res.json({ error: error })
                         } else if (results) {
-                            t_results.push({happy: results});
+                            t_results.push({friends: results});
                             res.json({ results: t_results })
                         }
                     })
@@ -137,7 +137,7 @@ async function charts(req, res) {
         (SELECT avg(S.instrumentalness) AS inavg
         FROM Saved_Songs SS JOIN Songs S ON SS.song_id = S.id JOIN Charting C on SS.song_id = C.song_id
         WHERE user_id = ${req.session.user_id})
-    SELECT DISTINCT(S.name), S.artists
+    SELECT DISTINCT(S.name) AS song_name, S.artists
     FROM Charting C JOIN Songs S ON S.id = C.song_id, dance, energy, acoustic, instrument
     WHERE C.region = "`
 
@@ -161,9 +161,9 @@ async function charts(req, res) {
             if (error) {
                 res.json({error: error})
             } else {
+                t_results.push({regions: results});
                 results = JSON.parse(JSON.stringify(results))
                 regions.push({regions: results});
-                console.log(regions[0].regions[0].region);
                 connection.query(first_half + `${regions[0].regions[0].region}` + second_half, function (error, results, fields) {
                     if (error) {
                         res.json({ error: error })
@@ -180,7 +180,7 @@ async function charts(req, res) {
                                     } else if (results) {
                                         t_results.push({region3: results});
                                         connection.query(
-                                            `SELECT DISTINCT(S.name), S.artists
+                                            `SELECT DISTINCT(S.name) AS song_name, S.artists
                                             FROM Songs S JOIN Charting C on S.id = C.song_id
                                             WHERE C.region = '${req.session.user_region}'
                                             LIMIT 20;`, function(error, results, fields) {
