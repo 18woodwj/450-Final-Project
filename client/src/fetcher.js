@@ -7,6 +7,13 @@ const getWrapped = async () => {
     return res.json()
 }
 
+const login = async(email) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/authenticate?email=${email}`, {
+        method: 'POST',
+    })
+    return res.json()
+}
+
 const getSongs = async () => {
     var res = await fetch(`http://${config.server_host}:${config.server_port}/songs`, {
         method: 'GET',
@@ -24,5 +31,6 @@ const getCharts = async () => {
 export {
     getWrapped,
     getSongs,
-    getCharts
+    getCharts,
+    login
 }
