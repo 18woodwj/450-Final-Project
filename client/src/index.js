@@ -11,7 +11,7 @@ import 'antd/dist/antd.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "shards-ui/dist/css/shards.min.css"
 
-import WrappedPage from './pages/BlendPage';
+import WrappedPage from './pages/WrappedPage';
 import ChartsPage from './pages/ChartsPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -53,12 +53,6 @@ ReactDOM.render(
 							render={() => (
 								<RegisterPage />
 							)}/>
-
-		{/* <Route exact
-							path="/blend"
-							render={() => (
-								<BlendPage />
-							)}/> */}
       </Switch>
     </Router>
   </div>,

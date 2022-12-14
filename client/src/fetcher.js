@@ -42,6 +42,13 @@ const getPlayerSearch = async (name, nationality, club, rating_high, rating_low,
     return res.json()
 }
 
+const getWrapped = async () => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/wrapped`, {
+        method: 'GET',
+    })
+    return res.json()
+}
+
 
 
 
@@ -60,5 +67,6 @@ export {
     getMatch,
     getPlayer,
     getMatchSearch,
-    getPlayerSearch
+    getPlayerSearch,
+    getWrapped
 }
