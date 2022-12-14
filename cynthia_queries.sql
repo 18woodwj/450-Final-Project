@@ -2,6 +2,16 @@
 INSERT INTO Users
 VALUES (user_id, "email", "region");
 
+/* choose 3 random regions */
+WITH regions AS (
+    SELECT DISTINCT C.region
+    FROM Charting C
+    LIMIT 50
+)
+SELECT DISTINCT(regions.region)
+FROM regions
+ORDER BY RAND() LIMIT 3
+
 /* given region, recommend songs in region's charts based on users's liked songs with artists
 with more than 20 songs*/
 WITH dance AS
@@ -27,9 +37,11 @@ WHERE C.region = "United States" AND
       (energy.energyavg + 0.1 <= S.energy OR energy.energyavg - 0.1 >= S.energy) AND
       (acoustic.acavg + 0.1 <= S.acousticness OR acoustic.acavg - 0.1 >= S.acousticness) AND
       (instrument.inavg + 0.1 <= S.instrumentalness OR instrument.inavg - 0.1 >= S.instrumentalness)
-LIMIT 10
+LIMIT 20
 
+/* get chart from own region */
 SELECT DISTINCT(S.name), S.artists
 FROM Songs S JOIN Charting C on S.id = C.song_id
 WHERE C.region = "United States"
-LIMIT 100
+LIMIT 20
+

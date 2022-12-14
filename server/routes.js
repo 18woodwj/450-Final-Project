@@ -16,15 +16,15 @@ const think = "energy < 0.5"
 const dance = "danceability > 0.60 AND liveness > 0.23"
 
 /**
- * Check if the userm exists, 
- * if so redirect to songs page else flag unident user
+ * Check if the user exists, 
+ * if so redirect to songs page else flag unindent user
  */
 async function login(req, res) {
     res.send("Welcome our 45 project!")
 }
 
 /**
- * Grab a selection of songs anmd sort by category
+ * Grab a selection of songs and sort by category
  */
 async function songs(req, res) {
     req.session.user_id = 1
@@ -115,7 +115,90 @@ async function songs(req, res) {
  */
 async function charts(req, res) {
     //TODO: Cynth
+    req.session.user_id = 1 //TODO: change this later
+    req.session.user_region = "United States" //TODO: change this later
+    regions = []
+    t_results = []
 
+    const first_half = 
+    `WITH dance AS
+        (SELECT avg(S.danceability) AS danceavg
+        FROM Saved_Songs SS JOIN Songs S ON SS.song_id = S.id JOIN Charting C on SS.song_id = C.song_id
+        WHERE user_id = ${req.session.user_id}),
+    energy AS
+        (SELECT avg(S.energy) AS energyavg
+        FROM Saved_Songs SS JOIN Songs S ON SS.song_id = S.id JOIN Charting C on SS.song_id = C.song_id
+        WHERE user_id = ${req.session.user_id}),
+    acoustic AS
+        (SELECT avg(S.acousticness) AS acavg
+        FROM Saved_Songs SS JOIN Songs S ON SS.song_id = S.id JOIN Charting C on SS.song_id = C.song_id
+        WHERE user_id = ${req.session.user_id}),
+    instrument AS
+        (SELECT avg(S.instrumentalness) AS inavg
+        FROM Saved_Songs SS JOIN Songs S ON SS.song_id = S.id JOIN Charting C on SS.song_id = C.song_id
+        WHERE user_id = ${req.session.user_id})
+    SELECT DISTINCT(S.name), S.artists
+    FROM Charting C JOIN Songs S ON S.id = C.song_id, dance, energy, acoustic, instrument
+    WHERE C.region = `
+
+    const second_half = 
+    `AND
+        (dance.danceavg + 0.1 <= S.danceability OR dance.danceavg - 0.1 >= S.danceability) AND
+        (energy.energyavg + 0.1 <= S.energy OR energy.energyavg - 0.1 >= S.energy) AND
+        (acoustic.acavg + 0.1 <= S.acousticness OR acoustic.acavg - 0.1 >= S.acousticness) AND
+        (instrument.inavg + 0.1 <= S.instrumentalness OR instrument.inavg - 0.1 >= S.instrumentalness)
+    LIMIT 20`
+
+    connection.query(
+        `WITH regions AS (
+            SELECT DISTINCT C.region
+            FROM Charting C
+            LIMIT 50
+        )
+        SELECT DISTINCT regions.region AS region
+        FROM regions
+        ORDER BY RAND() LIMIT 3`, function(error, results, fields) {
+            if (error) {
+                res.json({error: error})
+            } else {
+                regions.push({regions: results});
+                connection.query(first_half + `${results[0].regions}` + second_half, function (error, results, fields) {
+                    if (error) {
+                        res.json({ error: error })
+                    } else if (results) {
+                        t_results.push({region1: results});
+                        connection.query(first_half + `${results[1].regions}` + second_half, function (error, results, fields) {
+                            if (error) {
+                                res.json({ error: error })
+                            } else if (results) {
+                                t_results.push({region2: results});
+                                connection.query(first_half + `${results[2].regions}` + second_half, function (error, results, fields) {
+                                    if (error) {
+                                        res.json({ error: error })
+                                    } else if (results) {
+                                        t_results.push({region3: results});
+                                        connection.query(
+                                            `SELECT DISTINCT(S.name), S.artists
+                                            FROM Songs S JOIN Charting C on S.id = C.song_id
+                                            WHERE C.region = ${req.session.user_region}
+                                            LIMIT 20;`, function(error, results, fields) {
+                                                if (error) {
+                                                    res.json({ error: error})
+                                                } else if (results) {
+                                                    t_results.push({user_region: results});
+                                                    res.json({ results: t_results })
+                                                }
+                                            }
+                                        )
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    )
 }
 
 /**
