@@ -1,9 +1,9 @@
 {
-  "short_name": "FIFA Client",
-  "name": "CIS 550 - HW2 FIFA Client",
+  "short_name": "Spotify Helper",
+  "name": "CIS 550 - Spotify Helper",
   "icons": [
     {
-      "src": "football.svg",
+      "src": "spotify.svg",
       "type": "image/png",
       "sizes": "512x512"
     }
