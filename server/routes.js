@@ -19,8 +19,29 @@ const dance = "danceability > 0.60 AND liveness > 0.23"
  * Check if the user exists, 
  * if so redirect to songs page else flag unindent user
  */
-async function login(req, res) {
-    res.send("Welcome our 45 project!")
+async function authenticate(req, res) {
+    const email = req.params.email
+    req.session.email = email
+
+    connection.query(
+        `
+        SELECT email FROM Users WHERE email = '${email}'
+        `, function(error, results) {
+            if (error) {
+                res.JSON({error: error})
+
+            } else {
+                if (results != null) {
+                    res.JSON({success: true})
+
+                } else {
+                    res.JSON({success: false})
+                }
+                
+            }
+        }
+    )
+
 }
 
 /**
@@ -348,7 +369,7 @@ async function blend(req, res) {
 }
 
 module.exports = {
-    login,
+    authenticate,
     songs,
     saved,
     charts,

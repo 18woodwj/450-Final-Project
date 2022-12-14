@@ -49,6 +49,13 @@ const getWrapped = async () => {
     return res.json()
 }
 
+const login = async(email) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/authenticate?email=${email}`, {
+        method: 'POST',
+    })
+    return res.json()
+}
+
 
 
 
@@ -68,5 +75,6 @@ export {
     getPlayer,
     getMatchSearch,
     getPlayerSearch,
-    getWrapped
+    getWrapped,
+    login
 }
