@@ -17,7 +17,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import SavedPage from './pages/SavedPage';
 import SongsPage from './pages/SongsPage';
-import WrappedPage from './pages/WrappedPage';
+//import WrappedPage from './pages/WrappedPage';
 
 ReactDOM.render(
   <div>
@@ -54,11 +54,11 @@ ReactDOM.render(
 								<RegisterPage />
 							)}/>
 
-		<Route exact
+		{/* <Route exact
 							path="/blend"
 							render={() => (
 								<BlendPage />
-							)}/>
+							)}/> */}
       </Switch>
     </Router>
   </div>,
