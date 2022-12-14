@@ -49,51 +49,59 @@ async function songs(req, res) {
                       WHERE SS.user_id = ${req.session.user_id} AND S.id = SS.song_id)
                       `
 
-    const trailing_string = `ORDER BY RAND() 
+    const trailing_string = `
+    ORDER BY RAND() 
     LIMIT 20`
 
-    connection.query(leading_string + `AND ${dance}` + trailing_string, function (error, results, fields) {
+    connection.query(leading_string + `AND ${happy}` + trailing_string, function (error, results, fields) {
         if (error) {
             res.json({ error: error })
         } else if (results) {
-            t_results.push({dance: results});
+            t_results.push({happy: results});
             connection.query(leading_string + `AND ${sad}` + trailing_string, function (error, results, fields) {
                 if (error) {
                     res.json({ error: error })
                 } else if (results) {
                     t_results.push({sad: results});
-                    connection.query(leading_string + `AND ${think}` + trailing_string, function (error, results, fields) {
+                    connection.query(`
+                    WITH non_friends AS (
+                        SELECT user_id, email
+                        FROM Users U
+                        WHERE NOT EXISTS (
+                            SELECT f2_id
+                            FROM Friends F
+                            WHERE F.f1_id = 1 AND U.user_id = F.f2_id
+                        ) AND U.user_id <> ${req.session.user_id}
+                    ), non_friend_aggregates AS (
+                        SELECT email, AVG(energy) AS avg_energy, AVG(danceability) AS avg_dance,
+                                        AVG(loudness) AS avg_loud, AVG(acousticness) AS avg_acoust
+                        FROM non_friends N
+                            JOIN Saved_Songs SS ON SS.user_id = N.user_id
+                            JOIN Songs S ON S.id = SS.song_id
+                        GROUP BY email
+                    ), my_stats AS (
+                        SELECT AVG(energy) AS my_energy, AVG(danceability) AS my_dance,
+                                        AVG(loudness) AS my_loud, AVG(acousticness) AS my_acoust
+                        FROM Songs S
+                        JOIN (SELECT song_id
+                                FROM Saved_Songs
+                                WHERE user_id = ${req.session.user_id}) Me on S.id = Me.song_id
+                    )
+                    SELECT email, ABS(my_energy - avg_energy) AS e_dif,
+                            ABS(my_dance - avg_dance) AS d_dif, ABS(my_energy - avg_energy) AS e_dif,
+                            ABS(my_loud - avg_loud) AS l_dif, ABS(my_acoust - avg_acoust) AS a_dif,
+                            (SELECT e_dif) + (SELECT d_dif) + (SELECT l_dif) + (SELECT a_dif) AS total_distance
+                    FROM non_friend_aggregates, my_stats
+                    ORDER BY total_distance;`, function (error, results, fields) {
                         if (error) {
                             res.json({ error: error })
                         } else if (results) {
-                            t_results.push({think: results});
-                            connection.query(leading_string + `AND ${happy}` + trailing_string, function (error, results, fields) {
-                                if (error) {
-                                    res.json({ error: error })
-                                } else if (results) {
-                                    t_results.push({friends: results});
-                                    connection.query(`
-                                        SELECT email
-                                        FROM Users U
-                                        WHERE NOT EXISTS (
-                                            SELECT f2_id
-                                            FROM Friends F
-                                            WHERE F.f1_id = 1 AND U.user_id = F.f2_id
-                                        ) AND U.user_id <> ${req.session.user_id}
-                                        LIMIT 20`, function (error, results, fields) {
-                                        if (error) {
-                                            res.json({ error: error })
-                                        } else if (results) {
-                                            t_results.push({happy: results});
-                                            res.json({ results: t_results })
-                                        }
-                                    })
-                                }
-                            });    
+                            t_results.push({happy: results});
+                            res.json({ results: t_results })
                         }
-                    });
+                    })
                 }
-            });
+            });    
         }
     });
 }
@@ -217,10 +225,8 @@ async function wrapped(req, res) {
 
                     }
                 );
-
             }
         });
-
 }
 
 
