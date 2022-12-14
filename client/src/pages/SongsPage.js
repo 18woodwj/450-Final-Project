@@ -6,9 +6,11 @@ import {
 } from 'antd'
 
 import MenuBar from '../components/MenuBar';
-import { getAllMatches, getAllPlayers } from '../fetcher'
+import { getSongs } from '../fetcher'
 const { Column, ColumnGroup } = Table;
 const { Option } = Select;
+
+
 
 
 const playerColumns = [
@@ -43,11 +45,7 @@ class SongsPage extends React.Component {
     super(props)
 
     this.state = {
-      matchesResults: [],
-      matchesPageNumber: 1,
-      matchesPageSize: 10,
-      playersResults: [],
-      pagination: null  
+      songsResults: [],
     }
 
     this.leagueOnChange = this.leagueOnChange.bind(this)
@@ -66,22 +64,18 @@ class SongsPage extends React.Component {
   }
 
   componentDidMount() {
-    getAllMatches(null, null, 'D1').then(res => {
-      this.setState({ matchesResults: res.results })
-    })
 
-    getAllPlayers().then(res => {
-      console.log(res.results)
+    getSongs().then(res => {
+      console.log("hello")
       // TASK 1: set the correct state attribute to res.results
+      this.setState({ songsResults: res })
     })
-
- 
   }
 
 
   render() {
 
-    return (
+    return (      
       <div>
         <MenuBar />
         <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
