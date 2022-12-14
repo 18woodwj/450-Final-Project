@@ -23,7 +23,7 @@ ReactDOM.render(
     <Router>
       <Switch>
         <Route exact
-							path="/"
+							path="/songs"
 							render={() => (
 								<SongsPage />
 							)}/>

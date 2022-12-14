@@ -56,7 +56,21 @@ const login = async(email) => {
     return res.json()
 }
 
+const login = async(email) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/authenticate?email=${email}`, {
+        method: 'POST',
+    })
+    return res.json()
+}
 
+const getSongs = async () => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/songs`, {
+        method: 'GET',
+    })
+    console.log("here");
+    console.log(res.json());
+    return res.json()
+}
 
 
 
@@ -75,6 +89,5 @@ export {
     getPlayer,
     getMatchSearch,
     getPlayerSearch,
-    getWrapped,
     login
 }
