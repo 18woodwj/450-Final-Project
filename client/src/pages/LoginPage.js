@@ -1,125 +1,191 @@
-import React from 'react';
-import {
-  Table,
-  Pagination,
-  Select
-} from 'antd'
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import Form from "./utilities/Forms";
 
-import MenuBar from '../components/MenuBar';
-import { getAllMatches, getAllPlayers } from '../fetcher'
-const { Column, ColumnGroup } = Table;
-const { Option } = Select;
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
+  const [validate, setValidate] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
+  const validateLogin = () => {
+    let isValid = true;
 
-const playerColumns = [
-  {
-    title: 'Name',
-    dataIndex: 'Name',
-    key: 'Name',
-    sorter: (a, b) => a.Name.localeCompare(b.Name),
-    render: (text, row) => <a href={`/players?id=${row.PlayerId}`}>{text}</a>
-  },
-  {
-    title: 'Nationality',
-    dataIndex: 'Nationality',
-    key: 'Nationality',
-    sorter: (a, b) => a.Nationality.localeCompare(b.Nationality)
-  },
-  {
-    title: 'Rating',
-    dataIndex: 'Rating',
-    key: 'Rating',
-    sorter: (a, b) => a.Rating - b.Rating
-    
-  },
-  // TASK 7: add a column for Potential, with the ability to (numerically) sort ,
-  // TASK 8: add a column for Club, with the ability to (alphabetically) sort 
-  // TASK 9: add a column for Value - no sorting required
-];
+    let validator = Form.validator({
+      email: {
+        value: email,
+        isRequired: true,
+        isEmail: true,
+      },
+      password: {
+        value: password,
+        isRequired: true,
+        minLength: 6,
+      },
+    });
 
-class LoginPage extends React.Component {
+    if (validator !== null) {
+      setValidate({
+        validate: validator.errors,
+      });
 
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      matchesResults: [],
-      matchesPageNumber: 1,
-      matchesPageSize: 10,
-      playersResults: [],
-      pagination: null  
+      isValid = false;
     }
+    return isValid;
+  };
 
-    this.leagueOnChange = this.leagueOnChange.bind(this)
-    this.goToMatch = this.goToMatch.bind(this)
-  }
+  const authenticate = (e) => {
+    e.preventDefault();
 
+    const validate = validateLogin();
 
-  goToMatch(matchId) {
-    window.location = `/matches?id=${matchId}`
-  }
+    if (validate) {
+      setValidate({});
+      setEmail("");
+      setPassword("");
+      alert("Successfully Login");
+    }
+  };
 
-  leagueOnChange(value) {
-    // TASK 2: this value should be used as a parameter to call getAllMatches in fetcher.js with the parameters page and pageSize set to null
-    // then, matchesResults in state should be set to the results returned - see a similar function call in componentDidMount()
-    
-  }
+  const togglePassword = (e) => {
+    if (showPassword) {
+      setShowPassword(false);
+    } else {
+      setShowPassword(true);
+    }
+  };
 
-  componentDidMount() {
-    getAllMatches(null, null, 'D1').then(res => {
-      this.setState({ matchesResults: res.results })
-    })
-
-    getAllPlayers().then(res => {
-      console.log(res.results)
-      // TASK 1: set the correct state attribute to res.results
-    })
-
- 
-  }
-
-
-  render() {
-
-    return (
-      <div>
-        <MenuBar />
-        <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-          <h3>Players</h3>
-          <Table dataSource={this.state.playersResults} columns={playerColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
-        </div>
-        <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
-          <h3>Matches</h3>
-          <Select defaultValue="D1" style={{ width: 120 }} onChange={this.leagueOnChange}>
-            <Option value="D1">Bundesliga</Option>
-             {/* TASK 3: Take a look at Dataset Information.md from MS1 and add other options to the selector here  */}
-
-          </Select>
-          
-          <Table onRow={(record, rowIndex) => {
-    return {
-      onClick: event => {this.goToMatch(record.MatchId)}, // clicking a row takes the user to a detailed view of the match in the /matches page using the MatchId parameter  
-    };
-  }} dataSource={this.state.matchesResults} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}>
-            <ColumnGroup title="Teams">
-              {/* TASK 4: correct the title for the 'Home' column and add a similar column for 'Away' team in this ColumnGroup */}
-              <Column title="H" dataIndex="Home" key="Home" sorter= {(a, b) => a.Home.localeCompare(b.Home)}/>
-            </ColumnGroup>
-            <ColumnGroup title="Goals">
-              {/* TASK 5: add columns for home and away goals in this ColumnGroup, with the ability to sort values in these columns numerically */}
-             
-            </ColumnGroup>
-             {/* TASK 6: create two columns (independent - not in a column group) for the date and time. Do not add a sorting functionality */}
-          </Table>
-
-        </div>
-
-
+  return (
+    <div className="row g-0 auth-wrapper">
+      <div className="col-12 col-md-5 col-lg-6 h-100 auth-background-col">
+        <div className="auth-background-holder"></div>
+        <div className="auth-background-mask"></div>
       </div>
-    )
-  }
 
-}
+      <div className="col-12 col-md-7 col-lg-6 auth-main-col text-center">
+        <div className="d-flex flex-column align-content-end">
+          <div className="auth-body mx-auto">
+            <p>Login to your account</p>
+            <div className="auth-form-container text-start">
+              <form
+                className="auth-form"
+                method="POST"
+                onSubmit={authenticate}
+                autoComplete={"off"}
+              >
+                <div className="email mb-3">
+                  <input
+                    type="email"
+                    className={`form-control ${
+                      validate.validate && validate.validate.email
+                        ? "is-invalid "
+                        : ""
+                    }`}
+                    id="email"
+                    name="email"
+                    value={email}
+                    placeholder="Id"
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
 
-export default LoginPage
+                  <div
+                    className={`invalid-feedback text-start ${
+                      validate.validate && validate.validate.email
+                        ? "d-block"
+                        : "d-none"
+                    }`}
+                  >
+                    {validate.validate && validate.validate.email
+                      ? validate.validate.email[0]
+                      : ""}
+                  </div>
+                </div>
 
+                <div className="password mb-3">
+                  {/* <div className="input-group">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      className={`form-control ${
+                        validate.validate && validate.validate.password
+                          ? "is-invalid "
+                          : ""
+                      }`}
+                      name="password"
+                      id="password"
+                      value={password}
+                      placeholder="Password"
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+
+                    <button
+                      type="button"
+                      className="btn btn-outline-primary btn-sm"
+                      onClick={(e) => togglePassword(e)}
+                    >
+                      <i
+                        className={
+                          showPassword ? "far fa-eye" : "far fa-eye-slash"
+                        }
+                      ></i>{" "}
+                    </button>
+
+                    <div
+                      className={`invalid-feedback text-start ${
+                        validate.validate && validate.validate.password
+                          ? "d-block"
+                          : "d-none"
+                      }`}
+                    >
+                      {validate.validate && validate.validate.password
+                        ? validate.validate.password[0]
+                        : ""}
+                    </div>
+                  </div> */}
+
+                  <div className="extra mt-3 row justify-content-between">
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          id="remember"
+                          checked={remember}
+                          onChange={(e) => setRemember(e.currentTarget.checked)}
+                        />
+                        <label  className="form-check-label" htmlFor="remember">
+                          Remember me
+                        </label>
+                      </div>
+                    </div>
+                    {/*<div className="col-6">
+                      <div className="forgot-password text-end">
+                        <Link to="/forgot-password">Forgot password?</Link>
+                      </div>
+                      </div>*/}
+                </div>
+                <div className="text-center">
+                  <button
+                    type="submit"
+                    className="btn btn-primary w-100 theme-btn mx-auto"
+                  >
+                    Log In
+                  </button>
+                </div>
+              </form>
+
+              <hr />
+              <div className="auth-option text-center pt-2">
+                No Account?{" "}
+                <Link className="text-link" to="/register">
+                Register{" "}
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Login;
