@@ -1,5 +1,4 @@
 const express = require('express');
-const mysql      = require('mysql');
 var cors = require('cors')
 
 
@@ -7,9 +6,15 @@ const routes = require('./routes')
 const config = require('./config.json')
 
 const app = express();
+const session = require('express-session');
+
+app.use(session({secret: "anyrandomstring", user_id: 1}));
 
 // whitelist localhost 3000
 app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }));
+
+// Route 1 - register as GET 
+app.get('/register', routes.login)
 
 // Route 1 - register as GET 
 app.get('/login', routes.login)

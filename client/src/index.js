@@ -6,13 +6,18 @@ import {
 	Switch
 } from 'react-router-dom';
 
-import HomePage from './pages/HomePage';
-import PlayersPage from './pages/PlayersPage';
 import 'antd/dist/antd.css';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "shards-ui/dist/css/shards.min.css"
-import MatchesPage from './pages/MatchesPage';
+
+import WrappedPage from './pages/BlendPage';
+import ChartsPage from './pages/ChartsPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import SavedPage from './pages/SavedPage';
+import SongsPage from './pages/SongsPage';
+import WrappedPage from './pages/WrappedPage';
 
 ReactDOM.render(
   <div>
@@ -21,17 +26,38 @@ ReactDOM.render(
         <Route exact
 							path="/"
 							render={() => (
-								<HomePage />
+								<SongsPage />
 							)}/>
         <Route exact
-							path="/players"
+							path="/saved"
 							render={() => (
-								<PlayersPage />
+								<SavedPage />
 							)}/>
         <Route exact
-							path="/matches"
+							path="/charts"
 							render={() => (
-								<MatchesPage />
+								<ChartsPage />
+							)}/>
+		<Route exact
+							path="/wrapped"
+							render={() => (
+								<WrappedPage />
+							)}/>
+		<Route exact
+							path="/login"
+							render={() => (
+								<LoginPage />
+							)}/>
+		<Route exact
+							path="/register"
+							render={() => (
+								<RegisterPage />
+							)}/>
+
+		<Route exact
+							path="/blend"
+							render={() => (
+								<BlendPage />
 							)}/>
       </Switch>
     </Router>
