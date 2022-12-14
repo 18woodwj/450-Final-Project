@@ -42,6 +42,13 @@ const getPlayerSearch = async (name, nationality, club, rating_high, rating_low,
     return res.json()
 }
 
+const getWrapped = async () => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/wrapped`, {
+        method: 'GET',
+    })
+    return res.json()
+}
+
 const getSongs = async () => {
     var res = await fetch(`http://${config.server_host}:${config.server_port}/songs`, {
         method: 'GET',
@@ -61,14 +68,11 @@ const getSongs = async () => {
 
 
 
-
-
 export {
     getAllMatches,
     getAllPlayers,
     getMatch,
     getPlayer,
     getMatchSearch,
-    getPlayerSearch,
-    getSongs
+    getPlayerSearch
 }

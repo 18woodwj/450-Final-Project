@@ -115,7 +115,7 @@ async function songs(req, res) {
  */
 async function charts(req, res) {
     //TODO: Cynth
-    req.session.user_id = 1 //TODO: change this later
+    req.session.user_id = 4 //TODO: change this later
     req.session.user_region = "United States" //TODO: change this later
     regions = []
     t_results = []
@@ -139,15 +139,15 @@ async function charts(req, res) {
         WHERE user_id = ${req.session.user_id})
     SELECT DISTINCT(S.name), S.artists
     FROM Charting C JOIN Songs S ON S.id = C.song_id, dance, energy, acoustic, instrument
-    WHERE C.region = `
+    WHERE C.region = "`
 
     const second_half = 
-    `AND
+    `" AND
         (dance.danceavg + 0.1 <= S.danceability OR dance.danceavg - 0.1 >= S.danceability) AND
         (energy.energyavg + 0.1 <= S.energy OR energy.energyavg - 0.1 >= S.energy) AND
         (acoustic.acavg + 0.1 <= S.acousticness OR acoustic.acavg - 0.1 >= S.acousticness) AND
         (instrument.inavg + 0.1 <= S.instrumentalness OR instrument.inavg - 0.1 >= S.instrumentalness)
-    LIMIT 20`
+    LIMIT 20;`
 
     connection.query(
         `WITH regions AS (
@@ -157,22 +157,24 @@ async function charts(req, res) {
         )
         SELECT DISTINCT regions.region AS region
         FROM regions
-        ORDER BY RAND() LIMIT 3`, function(error, results, fields) {
+        ORDER BY RAND() LIMIT 3;`, function(error, results, fields) {
             if (error) {
                 res.json({error: error})
             } else {
+                results = JSON.parse(JSON.stringify(results))
                 regions.push({regions: results});
-                connection.query(first_half + `${results[0].regions}` + second_half, function (error, results, fields) {
+                console.log(regions[0].regions[0].region);
+                connection.query(first_half + `${regions[0].regions[0].region}` + second_half, function (error, results, fields) {
                     if (error) {
                         res.json({ error: error })
                     } else if (results) {
                         t_results.push({region1: results});
-                        connection.query(first_half + `${results[1].regions}` + second_half, function (error, results, fields) {
+                        connection.query(first_half + `${regions[0].regions[1].region}` + second_half, function (error, results, fields) {
                             if (error) {
                                 res.json({ error: error })
                             } else if (results) {
                                 t_results.push({region2: results});
-                                connection.query(first_half + `${results[2].regions}` + second_half, function (error, results, fields) {
+                                connection.query(first_half + `${regions[0].regions[2].region}` + second_half, function (error, results, fields) {
                                     if (error) {
                                         res.json({ error: error })
                                     } else if (results) {
@@ -180,7 +182,7 @@ async function charts(req, res) {
                                         connection.query(
                                             `SELECT DISTINCT(S.name), S.artists
                                             FROM Songs S JOIN Charting C on S.id = C.song_id
-                                            WHERE C.region = ${req.session.user_region}
+                                            WHERE C.region = '${req.session.user_region}'
                                             LIMIT 20;`, function(error, results, fields) {
                                                 if (error) {
                                                     res.json({ error: error})
