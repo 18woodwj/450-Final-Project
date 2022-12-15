@@ -124,15 +124,15 @@ class SongsPage extends React.Component {
     return (      
       <div>
         <MenuBar />
-      <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+      <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3>Pulling up to Smokes playlist!!</h3>
         <Table dataSource={this.state.happyResults} columns={songColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
-      <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+      <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3>Sad songs for long VP hours...</h3>
         <Table dataSource={this.state.sadResults} columns={songColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
-      <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+      <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3>Suggested friends</h3>
         <Table dataSource={this.state.friendResults} columns={friendColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
