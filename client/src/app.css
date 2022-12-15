@@ -10,3 +10,9 @@
     margin-bottom: 5vh;
     margin-top: 1vh;
   }
+
+  .button-holder{
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+  }
