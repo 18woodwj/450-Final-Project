@@ -1,4 +1,4 @@
-import '../index.css'
+import '../app.css'
 
 import React from 'react';
 import {
@@ -18,19 +18,16 @@ const chartColumns = [
     title: 'Song',
     dataIndex: 'song_name',
     key: 'song_name',
-    width: 300,
   },
   {
     title: 'Artists',
     dataIndex: 'artists',
-    width: 300,
     key: 'artists',    
   },
   {
     title: 'Add song!',
     key: 'key',
     dataIndex: 'key',
-    width: 50,
     align: 'center',
     render: (text, record) => (
      <button onClick={()=> console.log("hello")}>

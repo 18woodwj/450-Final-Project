@@ -1,4 +1,4 @@
-import '../index.css'
+import '../app.css'
 
 import React from 'react';
 import {
@@ -109,7 +109,7 @@ class SongsPage extends React.Component {
   render() {
     if(this.state.loading) {
       return <span className="Loader">
-     <div className="Loader-indicator" style={{ color: "green", align: "center", marginTop: '5vh'}} >
+     <div className="Loader-indicator" style={{ "color" : "green", "text-align" : "center", marginTop: '45vh'}} >
        <h1>
          <span>Chugging away... Your songs are loading...</span>
          <span className="Loader-ellipsis" >
