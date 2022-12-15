@@ -8,7 +8,7 @@ import {
 } from 'antd'
 
 import MenuBar from '../components/MenuBar';
-import { getFriends } from '../fetcher'
+import { getFriends, addFriend } from '../fetcher'
 const { Column, ColumnGroup } = Table;
 const { Option } = Select;
 
@@ -45,15 +45,19 @@ const friendColumns = [
     key: 'total_distance',
   },
   {
-    // John this should add two entries to the Friends database: (u1, u2) and (u2, u1) based on IDs
-    // you might have to look up by iD
     title: 'Add friend!',
     key: 'key',
     dataIndex: 'key',
     width: 50,
     align: 'center',
     render: (text, record) => (
-     <button onClick={()=> console.log("hello")}>
+     <button onClick={()=> addFriend(record.email).then(res => {
+      if (res.error) {
+        console.log(res.error)
+      } else {
+        console.log("fuck yes")
+      }
+     })}>
        {"ADD"}
      </button>
     ),

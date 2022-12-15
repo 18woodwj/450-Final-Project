@@ -49,6 +49,20 @@ const getFriends = async (mood) => {
     return res.json()
 }
 
+const putSong = async (name, artists) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/addSong?name=${name}&artists=${artists}`, {
+        method: 'POST',
+    })
+    return res.json()
+}
+
+const addFriend = async (friend_email) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/addFriend?email=${friend_email}`, {
+        method: 'POST',
+    })
+    return res.json()
+}
+
 export {
     getWrapped,
     getSongs,
@@ -56,5 +70,7 @@ export {
     login,
     getSaved,
     register,
-    getFriends
+    getFriends,
+    putSong,
+    addFriend
 }

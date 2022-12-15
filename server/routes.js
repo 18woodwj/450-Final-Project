@@ -49,6 +49,87 @@ async function authenticate(req, res) {
 }
 
 /**
+ * Add a song to the saved songs of a particular user. The user_id should be saved in the session
+ */
+async function addSong(req, res) {
+    console.log("ROUTES: addSong")
+    var user = session.user_id
+    song_name = req.query.artists
+    song_artists = req.query.name
+    // find the song_id of the song by name and aritsts
+    connection.query(
+        `
+        SELECT DISTINCT id FROM Songs WHERE name = '${song_name}' AND artists = '${song_artists}'
+        `, function(error, results) {
+            if (error) {
+                res.json({error: error})
+            } else {
+                var id = results[0].id
+                connection.query(
+                    `
+                    INSERT INTO Saved_Songs(user_id, song_id)
+                    VALUES
+                        ('${user}', '${id}');
+                    `, function(error, results) {
+                        if (error) {
+                            res.json({error: error})
+                        } else {
+                            console.log("Song saved!")
+                            res.json({success: true})
+            
+                        }
+                    }
+                )
+
+            }
+            
+        }
+    )
+    
+}
+
+/**
+ * Add a new friend in the form of (curr_user_id, friend_id) to the friends table (need to create bidrectional edge)
+ */
+async function addFriend(req, res) {
+    console.log("ROUTES: addFriend")
+    var user = session.user_id
+    var email = req.query.email
+    
+    // find the song_id of the song by name and aritsts
+    connection.query(
+        `
+        SELECT user_id FROM Users WHERE email = '${email}'
+        `, function(error, results) {
+            if (error) {
+                res.json({error: error})
+            } else {
+                var id = results[0].user_id
+                connection.query(
+                    `
+                    INSERT INTO Friends(f1_id, f2_id)
+                    VALUES
+                        ('${user}', '${id}'),
+                        ('${id}', '${user}')
+                    `, function(error, results) {
+                        if (error) {
+                            res.json({error: error})
+                        } else {
+                            console.log("Friend added!")
+                            res.json({success: true})
+            
+                        }
+                    }
+                )
+
+            }
+            
+        }
+    )
+    
+}
+
+/**
  * Register a new user, adding them to the database
  */
 async function register(req, res) {
@@ -440,5 +521,7 @@ module.exports = {
     charts,
     wrapped,
     register,
-    friends
+    friends,
+    addSong,
+    addFriend
 }

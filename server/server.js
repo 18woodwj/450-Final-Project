@@ -16,6 +16,12 @@ app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }));
 // Register a new user by adding them to the Users table
 app.post('/register', routes.register)
 
+// Register a new user by adding them to the Users table
+app.post('/addSong', routes.addSong)
+
+// Add a new friend
+app.post('/addFriend', routes.addFriend)
+
 // Post a new user to the database
 app.post('/authenticate', routes.authenticate)
 
