@@ -90,19 +90,19 @@ class ChartsPage extends React.Component {
     return (      
       <div>
         <MenuBar />
-      <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+      <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3>Charting in your region!</h3>
         <Table style={{width: '100%', justifyContent: 'center'}} dataSource={this.state.userRegionResults} columns={chartColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
-      <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+      <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3>Charting in {this.state.regionNames[0]}</h3>
         <Table dataSource={this.state.region1Results} columns={chartColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
-      <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+      <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3>Charting in {this.state.regionNames[1]}</h3>
         <Table dataSource={this.state.region2Results} columns={chartColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
-      <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+      <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3>Charting in {this.state.regionNames[2]}</h3>
         <Table dataSource={this.state.region3Results} columns={chartColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
