@@ -74,9 +74,9 @@ class SavedPage extends React.Component {
 
       <div align = "center" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
       <Radio.Group defaultValue="a" size="large">
-        <Radio.Button value="a">Just completed Huffman encoding</Radio.Button>
-        <Radio.Button value="b">545 got me down</Radio.Button>
-        <Radio.Button value="c">Doing 160 contradiction proof</Radio.Button>
+        <Radio.Button value="a">Completed Huffman HW (Happy)</Radio.Button>
+        <Radio.Button value="b">545 got me down (Sad)</Radio.Button>
+        <Radio.Button value="c">Doing 160 contradiction proof (Think)</Radio.Button>
         <Radio.Button value="d">262</Radio.Button>
       </Radio.Group>
       </div>
