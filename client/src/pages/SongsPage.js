@@ -79,7 +79,20 @@ const friendColumns = [
     dataIndex: 'total_distance',
     key: 'total_distance',
   },
-
+  {
+    // John this should add two entries to the Friends database: (u1, u2) and (u2, u1) based on IDs
+    // you might have to look up by iD
+    title: 'Add friend!',
+    key: 'key',
+    dataIndex: 'key',
+    width: 50,
+    align: 'center',
+    render: (text, record) => (
+     <button onClick={()=> console.log("hello")}>
+       {"ADD"}
+     </button>
+    ),
+  },
 ];
 
 class SongsPage extends React.Component {
