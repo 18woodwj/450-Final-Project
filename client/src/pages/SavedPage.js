@@ -1,4 +1,4 @@
-import '../index.css'
+import '../app.css'
 
 import React from 'react';
 import {
@@ -69,7 +69,7 @@ class SavedPage extends React.Component {
     return (      
       <div>
         <MenuBar />
-      <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+      <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3>Your Pottruck favorites</h3>
         <Table dataSource={this.state.results} columns={songColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
