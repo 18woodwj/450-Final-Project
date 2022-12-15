@@ -60,7 +60,7 @@ class ChartsPage extends React.Component {
       <div>
         <MenuBar />
       <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-        <h3>Charting in the user's region!</h3>
+        <h3>Charting in your region!</h3>
         <Table dataSource={this.state.userRegionResults} columns={chartColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
       <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>

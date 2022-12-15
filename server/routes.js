@@ -316,7 +316,6 @@ async function wrapped(req, res) {
                                                     res.json({error: error})
                                                 } else {
                                                     t_results.push({chart_regions: results});
-                                                    console.log(t_results);
                                                     res.json(t_results);
 
                                                 }
@@ -345,7 +344,6 @@ async function saved(req, res) {
     req.session.user_region = "Argentina"
 
     // case on mood
-
 
     connection.query(`
     SELECT name, artists, album,

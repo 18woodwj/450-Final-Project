@@ -115,8 +115,6 @@ class WrappedPage extends React.Component {
       this.setState({ avg_song_atr: res[2].avg_song_atr })
       this.setState({ chart_regions: res[3].chart_regions })
     })
-
- 
   }
 
 

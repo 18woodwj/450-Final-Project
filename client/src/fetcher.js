@@ -28,9 +28,17 @@ const getCharts = async () => {
     return res.json()
 }
 
+const getSaved = async () => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/saved`, {
+        method: 'GET',
+    })
+    return res.json()
+}
+
 export {
     getWrapped,
     getSongs,
     getCharts,
-    login
+    login,
+    getSaved
 }

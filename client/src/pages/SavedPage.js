@@ -3,11 +3,12 @@ import '../index.css'
 import React from 'react';
 import {
   Table,
-  Select
+  Select,
+  Pagination
 } from 'antd'
 
 import MenuBar from '../components/MenuBar';
-import { getSongs } from '../fetcher'
+import { getSaved } from '../fetcher'
 const { Column, ColumnGroup } = Table;
 const { Option } = Select;
 
@@ -41,20 +42,13 @@ class SavedPage extends React.Component {
     super(props)
 
     this.state = {
-      happyResults: [],
-      sadResults: [],
-      friendResults: []
+      results: [],
     }
   }
 
-
   componentDidMount() {
-
-    getSongs().then(res => {
-      console.log(res)
-      this.setState({ happyResults: res.results[0].happy })
-      this.setState({ sadResults: res.results[1].sad })
-      this.setState({ friendResults: res.results[2].friends })
+    getSaved().then(res => {
+      this.setState({ results: res.results })
     })
   }
 
@@ -64,16 +58,8 @@ class SavedPage extends React.Component {
       <div>
         <MenuBar />
       <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-        <h3>Pulling up to Smokes playlist!!</h3>
-        <Table dataSource={this.state.happyResults} columns={songColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
-      </div>
-      <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-        <h3>Sad songs for long VP hours...</h3>
-        <Table dataSource={this.state.sadResults} columns={songColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
-      </div>
-      <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-        <h3>Suggested friends</h3>
-        <Table dataSource={this.state.friendResults} columns={friendColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+        <h3>Your Pottruck favorites</h3>
+        <Table dataSource={this.state.results} columns={songColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
       </div>
     )
