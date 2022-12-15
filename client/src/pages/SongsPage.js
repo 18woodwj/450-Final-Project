@@ -109,7 +109,7 @@ class SongsPage extends React.Component {
   render() {
     if(this.state.loading) {
       return <span className="Loader">
-     <div className="Loader-indicator" >
+     <div style={{ color: "green", align = "center", marginTop: '5vh'}} >
        <h1>
          <span>Chugging away... Your songs are loading...</span>
          <span className="Loader-ellipsis" >
