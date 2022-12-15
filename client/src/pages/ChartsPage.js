@@ -71,7 +71,7 @@ class ChartsPage extends React.Component {
   render() {
     if(this.state.loading) {
       return <span className="Loader">
-     <div className="Loader-indicator" >
+     <div className="Loader-indicator" style={{ "color" : "green", "text-align" : "center", marginTop: '45vh'}} >
        <h1>
          <span>Chugging away... Your songs are loading...</span>
          <span className="Loader-ellipsis" >

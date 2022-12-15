@@ -28,16 +28,8 @@ app.get('/saved', routes.saved)
 // Route 4 - register as GET 
 app.get('/charts', routes.charts)
 
-// Route 5 - register as GET 
-app.get('/blend', routes.blend)
-
 // Route 6 - register as GET 
 app.get('/wrapped', routes.wrapped)
-
-
-
-
-
 
 app.listen(config.server_port, () => {
     console.log(`Server running at http://${config.server_host}:${config.server_port}/`);

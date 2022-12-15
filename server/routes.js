@@ -10,17 +10,12 @@ const connection = mysql.createConnection({
 });
 connection.connect();
 
-const happy = "danceability >= 0.6 AND energy >= 0.6 AND liveness >= 0.21"
-const sad = "liveness < 0.19 AND energy < 0.55 AND danceability < 0.50"
-const think = "energy < 0.5"
-const dance = "danceability > 0.60 AND liveness > 0.23"
-
 /**
  * Check if the user exists, 
  * if so redirect to songs page else flag unindent user
  */
 async function authenticate(req, res) {
-    const email = req.params.email
+    const email = req.query.email
     req.session.email = email
 
     connection.query(
@@ -53,6 +48,9 @@ async function songs(req, res) {
 
     // store results: recommended songs for mood as well as suggested users
     t_results = []
+
+    const happy = "danceability >= 0.6 AND energy >= 0.6 AND liveness >= 0.21"
+    const sad = "liveness < 0.19 AND energy < 0.55 AND danceability < 0.50"
 
     const leading_string = `
     WITH charting_sample AS (
@@ -324,10 +322,8 @@ async function wrapped(req, res) {
 
                                     } 
                                 }
-                            );
-                            
+                            );            
                         } 
-
                     }
                 );
             }
@@ -343,13 +339,29 @@ async function saved(req, res) {
     req.session.user_id = 1
     req.session.user_region = "Argentina"
 
-    // case on mood
+    var curr_mood = req.query.mood;
+    const happy = "danceability >= 0.6 AND energy >= 0.6 AND liveness >= 0.21"
+    const sad = "liveness < 0.19 AND energy < 0.55 AND danceability < 0.50"
+    const think = "energy < 0.5 AND acousticness > 0.34"
+    const dance = "danceability > 0.60 AND liveness > 0.23"
+
+    if (curr_mood == "happy") {
+        curr_mood = happy
+    } else if (curr_mood == "sad") {
+        curr_mood = sad
+    } else if (curr_mood == "think") {
+        curr_mood = think
+    } else {
+        curr_mood = dance
+    }
 
     connection.query(`
     SELECT name, artists, album,
     RIGHT(SEC_TO_TIME(ROUND(duration_ms / 1000, 0)), 5) AS Duration
     FROM Songs S JOIN Saved_Songs SS on S.id = SS.song_id
-    WHERE SS.user_id = ${req.session.user_id}`, function (error, results, fields) {
+    WHERE SS.user_id = ${req.session.user_id}
+    AND + ${curr_mood}
+    ORDER BY RAND()`, function (error, results, fields) {
         if (error) {
             res.json({ error: error })
         } else if (results) {
@@ -358,19 +370,10 @@ async function saved(req, res) {
     });    
 }
 
-/**
- * 
- */
-async function blend(req, res) {
-    //TODO: John
-
-}
-
 module.exports = {
     authenticate,
     songs,
     saved,
     charts,
-    blend,
     wrapped
 }
