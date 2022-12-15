@@ -28,8 +28,8 @@ const getCharts = async () => {
     return res.json()
 }
 
-const getSaved = async () => {
-    var res = await fetch(`http://${config.server_host}:${config.server_port}/saved`, {
+const getSaved = async (mood) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/saved?mood=${mood}`, {
         method: 'GET',
     })
     return res.json()
