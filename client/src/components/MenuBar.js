@@ -33,6 +33,11 @@ class MenuBar extends React.Component {
               Wrapped
             </NavLink>
           </NavItem>
+          <NavItem>
+            <NavLink active href="/friends">
+              Friends
+            </NavLink>
+          </NavItem>
         </Nav>
       </Navbar>
         )
