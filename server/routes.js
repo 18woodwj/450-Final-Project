@@ -99,7 +99,6 @@ async function register(req, res) {
 }
 
 async function friends(req, res) {
-
     console.log("ROUTES: friends")
     console.log(session.email)
 
@@ -126,46 +125,6 @@ async function friends(req, res) {
             JOIN (SELECT song_id
                     FROM Saved_Songs
                     WHERE user_id = ${session.user_id}) Me on S.id = Me.song_id
-        )
-        SELECT email, ABS(my_energy - avg_energy) AS e_dif,
-                ABS(my_dance - avg_dance) AS d_dif, ABS(my_energy - avg_energy) AS e_dif,
-                ABS(my_loud - avg_loud) AS l_dif, ABS(my_acoust - avg_acoust) AS a_dif,
-                (SELECT e_dif) + (SELECT d_dif) + (SELECT l_dif) + (SELECT a_dif) AS total_distance
-        FROM non_friend_aggregates, my_stats
-        ORDER BY total_distance;`, function (error, results, fields) {
-        if (error) {
-            res.json({ error: error })
-        } else if (results) {
-            res.json({ results: results })
-        }
-    })
-}
-
-async function friends(req, res) {
-
-    connection.query(`
-        WITH non_friends AS (
-            SELECT user_id, email
-            FROM Users U
-            WHERE NOT EXISTS (
-                SELECT f2_id
-                FROM Friends F
-                WHERE F.f1_id = 1 AND U.user_id = F.f2_id
-            ) AND U.user_id <> ${req.session.user_id}
-        ), non_friend_aggregates AS (
-            SELECT email, AVG(energy) AS avg_energy, AVG(danceability) AS avg_dance,
-                            AVG(loudness) AS avg_loud, AVG(acousticness) AS avg_acoust
-            FROM non_friends N
-                JOIN Saved_Songs SS ON SS.user_id = N.user_id
-                JOIN Songs S ON S.id = SS.song_id
-            GROUP BY email
-        ), my_stats AS (
-            SELECT AVG(energy) AS my_energy, AVG(danceability) AS my_dance,
-                            AVG(loudness) AS my_loud, AVG(acousticness) AS my_acoust
-            FROM Songs S
-            JOIN (SELECT song_id
-                    FROM Saved_Songs
-                    WHERE user_id = ${req.session.user_id}) Me on S.id = Me.song_id
         )
         SELECT email, ABS(my_energy - avg_energy) AS e_dif,
                 ABS(my_dance - avg_dance) AS d_dif, ABS(my_energy - avg_energy) AS e_dif,
@@ -247,19 +206,19 @@ async function charts(req, res) {
     `WITH dance AS
         (SELECT avg(S.danceability) AS danceavg
         FROM Saved_Songs SS JOIN Songs S ON SS.song_id = S.id JOIN Charting C on SS.song_id = C.song_id
-        WHERE user_id = ${req.session.user_id}),
+        WHERE user_id = ${session.user_id}),
     energy AS
         (SELECT avg(S.energy) AS energyavg
         FROM Saved_Songs SS JOIN Songs S ON SS.song_id = S.id JOIN Charting C on SS.song_id = C.song_id
-        WHERE user_id = ${req.session.user_id}),
+        WHERE user_id = ${session.user_id}),
     acoustic AS
         (SELECT avg(S.acousticness) AS acavg
         FROM Saved_Songs SS JOIN Songs S ON SS.song_id = S.id JOIN Charting C on SS.song_id = C.song_id
-        WHERE user_id = ${req.session.user_id}),
+        WHERE user_id = ${session.user_id}),
     instrument AS
         (SELECT avg(S.instrumentalness) AS inavg
         FROM Saved_Songs SS JOIN Songs S ON SS.song_id = S.id JOIN Charting C on SS.song_id = C.song_id
-        WHERE user_id = ${req.session.user_id})
+        WHERE user_id = ${session.user_id})
     SELECT * FROM (SELECT DISTINCT(S.name) AS song_name, S.artists
     FROM Charting C JOIN Songs S ON S.id = C.song_id, dance, energy, acoustic, instrument
     WHERE C.region = "`
@@ -335,12 +294,11 @@ async function charts(req, res) {
  * 
  */
 async function wrapped(req, res) {
-    //TODO: John
     t_results = []
     connection.query(
         `SELECT SS.user_id, SUBSTRING_INDEX(S.artists, ',', 1) as main_artist, COUNT(S.id) as num FROM Saved_Songs SS
         JOIN Songs S  ON S.id = SS.song_id
-        WHERE SS.user_id = ${req.session.user_id}
+        WHERE SS.user_id = ${session.user_id}
         GROUP BY main_artist
         ORDER BY num DESC
         LIMIT 3`, function(error, results, fields) {
@@ -354,7 +312,7 @@ async function wrapped(req, res) {
                     WITH u_friends AS (
                         SELECT U.user_id, F.f2_id as friend FROM Users U
                             JOIN Friends F on U.user_id = F.f1_id
-                        WHERE U.user_id = 3
+                        WHERE U.user_id = ${session.user_id}
                     ),
                     
                     avg_f_atr AS (
@@ -368,7 +326,7 @@ async function wrapped(req, res) {
                         FROM Users U
                             JOIN Saved_Songs SS ON SS.user_id = U.user_id
                             JOIN Songs S ON S.id = SS.song_id
-                        WHERE U.user_id = 3
+                        WHERE U.user_id = ${session.user_id}
                         GROUP BY U.user_id
                         )
                     )
@@ -380,7 +338,7 @@ async function wrapped(req, res) {
                            PERCENT_RANK() over (ORDER BY avg_a) AS  percent_a
                            FROM avg_f_atr AS afa
                                   ) AS total_p
-                    WHERE user = 3
+                    WHERE user = ${session.user_id}
 
 
                     `, function (error, results, fields) {
@@ -394,7 +352,7 @@ async function wrapped(req, res) {
                                 SELECT SS.user_id, avg(liveness) AS avg_l, avg(energy) AS avg_e, avg(danceability) AS avg_d, avg(acousticness) AS avg_a
                                 FROM Saved_Songs SS
                                     JOIN Songs S ON S.id = SS.song_id
-                                WHERE SS.user_id = 3
+                                WHERE SS.user_id = ${session.user_id}
                                 GROUP BY SS.user_id
                                 
                                 `, function (error, results, fields) {
@@ -410,7 +368,7 @@ async function wrapped(req, res) {
                                                     SELECT name, region, song_rank FROM Saved_Songs SS
                                                     JOIN Songs S ON SS.song_id = S.id
                                                     JOIN Charting C ON C.song_id = S.id
-                                                    WHERE SS.user_id = 3) AS ss_chart
+                                                    WHERE SS.user_id = ${session.user_id}) AS ss_chart
                                                 GROUP BY name, region
                                                 ORDER BY m_rank DESC) AS num_r_m
                                             GROUP BY name
