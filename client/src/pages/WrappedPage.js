@@ -1,3 +1,5 @@
+import '../app.css'
+
 import React from 'react';
 import {
   Table,
@@ -88,7 +90,6 @@ const atributesColumns = [
     dataIndex: 'avg_a',
     key: 'avg_a',    
   },
-
 ];
 
 class WrappedPage extends React.Component {
@@ -110,14 +111,11 @@ class WrappedPage extends React.Component {
   // Populate data
   componentDidMount() {
     getWrapped().then(res => {
-      console.log(res)
       this.setState({ artists: res[0].artists})
       this.setState({ percentiles: res[1].percentiles})
       this.setState({ avg_song_atr: res[2].avg_song_atr })
       this.setState({ chart_regions: res[3].chart_regions })
     })
-
- 
   }
 
 
@@ -126,20 +124,19 @@ class WrappedPage extends React.Component {
     return (
       <div>
         <MenuBar />
-
-      <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+      <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3>Just how popular were your songs?</h3>
         <Table dataSource={this.state.chart_regions} columns={regionColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
-      <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+      <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3>How does your taste compare to that of your friends?</h3>
         <Table dataSource={this.state.percentiles} columns={percentileColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
-      <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+      <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3>What are some of the common characteristics of your songs?</h3>
         <Table dataSource={this.state.avg_song_atr} columns={atributesColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
-      <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+      <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3>Who were your most featured artists?</h3>
         <Table dataSource={this.state.artists} columns={artistsColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>

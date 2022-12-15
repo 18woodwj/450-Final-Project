@@ -1,0 +1,18 @@
+.spotify-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: black;
+    font-family: Arial;
+    font-weight: lighter;
+    margin-bottom: 5vh;
+    margin-top: 1vh;
+  }
+
+  .button-holder{
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+  }

@@ -1,41 +1,42 @@
+import '../app.css'
+
 import React from 'react';
 import {
   Table,
+  Select,
   Pagination,
-  Select
+  Cell
 } from 'antd'
 
 import MenuBar from '../components/MenuBar';
-import { getAllMatches, getAllPlayers } from '../fetcher'
+import { getCharts } from '../fetcher'
 const { Column, ColumnGroup } = Table;
 const { Option } = Select;
 
-
-const playerColumns = [
+const chartColumns = [
   {
-    title: 'Name',
-    dataIndex: 'Name',
-    key: 'Name',
-    sorter: (a, b) => a.Name.localeCompare(b.Name),
-    render: (text, row) => <a href={`/players?id=${row.PlayerId}`}>{text}</a>
+    title: 'Song',
+    dataIndex: 'song_name',
+    key: 'song_name',
   },
   {
-    title: 'Nationality',
-    dataIndex: 'Nationality',
-    key: 'Nationality',
-    sorter: (a, b) => a.Nationality.localeCompare(b.Nationality)
+    title: 'Artists',
+    dataIndex: 'artists',
+    key: 'artists',    
   },
   {
-    title: 'Rating',
-    dataIndex: 'Rating',
-    key: 'Rating',
-    sorter: (a, b) => a.Rating - b.Rating
-    
+    title: 'Add song!',
+    key: 'key',
+    dataIndex: 'key',
+    align: 'center',
+    render: (text, record) => (
+     <button onClick={()=> console.log("hello")}>
+       {"+++"}
+     </button>
+    ),
   },
-  // TASK 7: add a column for Potential, with the ability to (numerically) sort ,
-  // TASK 8: add a column for Club, with the ability to (alphabetically) sort 
-  // TASK 9: add a column for Value - no sorting required
 ];
+
 
 class ChartsPage extends React.Component {
 
@@ -43,82 +44,68 @@ class ChartsPage extends React.Component {
     super(props)
 
     this.state = {
-      matchesResults: [],
-      matchesPageNumber: 1,
-      matchesPageSize: 10,
-      playersResults: [],
-      pagination: null  
+      regionNames: [], 
+      region1Results: [],
+      region2Results: [],
+      region3Results: [],
+      userRegionResults: [],
+      loading: true,
     }
-
-    this.leagueOnChange = this.leagueOnChange.bind(this)
-    this.goToMatch = this.goToMatch.bind(this)
   }
 
-
-  goToMatch(matchId) {
-    window.location = `/matches?id=${matchId}`
-  }
-
-  leagueOnChange(value) {
-    // TASK 2: this value should be used as a parameter to call getAllMatches in fetcher.js with the parameters page and pageSize set to null
-    // then, matchesResults in state should be set to the results returned - see a similar function call in componentDidMount()
-    
-  }
 
   componentDidMount() {
-    getAllMatches(null, null, 'D1').then(res => {
-      this.setState({ matchesResults: res.results })
-    })
 
-    getAllPlayers().then(res => {
-      console.log(res.results)
-      // TASK 1: set the correct state attribute to res.results
-    })
+    getCharts().then(res => {
 
- 
+      this.setState({ regionNames: [res.results[0].regions[0].region, res.results[0].regions[1].region, res.results[0].regions[2].region] })
+      this.setState({ userRegionResults: res.results[4].user_region })
+      this.setState({ region1Results: res.results[1].region1 })
+      this.setState({ region2Results: res.results[2].region2 })
+      this.setState({ region3Results: res.results[3].region3 })
+      this.setState({ loading: false })
+
+    })
   }
 
-
   render() {
+    if(this.state.loading) {
+      return <span className="Loader">
+     <div className="Loader-indicator" >
+       <h1>
+         <span>Chugging away... Your songs are loading...</span>
+         <span className="Loader-ellipsis" >
+           <span className="Loader-ellipsisDot">.</span>
+           <span className="Loader-ellipsisDot">.</span>
+           <span className="Loader-ellipsisDot">.</span>
+         </span>
+       </h1>
+     </div>
+   </span>
+   }
 
-    return (
+    return (      
       <div>
         <MenuBar />
-        <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-          <h3>Players</h3>
-          <Table dataSource={this.state.playersResults} columns={playerColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
-        </div>
-        <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
-          <h3>Matches</h3>
-          <Select defaultValue="D1" style={{ width: 120 }} onChange={this.leagueOnChange}>
-            <Option value="D1">Bundesliga</Option>
-             {/* TASK 3: Take a look at Dataset Information.md from MS1 and add other options to the selector here  */}
-
-          </Select>
-          
-          <Table onRow={(record, rowIndex) => {
-    return {
-      onClick: event => {this.goToMatch(record.MatchId)}, // clicking a row takes the user to a detailed view of the match in the /matches page using the MatchId parameter  
-    };
-  }} dataSource={this.state.matchesResults} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}>
-            <ColumnGroup title="Teams">
-              {/* TASK 4: correct the title for the 'Home' column and add a similar column for 'Away' team in this ColumnGroup */}
-              <Column title="H" dataIndex="Home" key="Home" sorter= {(a, b) => a.Home.localeCompare(b.Home)}/>
-            </ColumnGroup>
-            <ColumnGroup title="Goals">
-              {/* TASK 5: add columns for home and away goals in this ColumnGroup, with the ability to sort values in these columns numerically */}
-             
-            </ColumnGroup>
-             {/* TASK 6: create two columns (independent - not in a column group) for the date and time. Do not add a sorting functionality */}
-          </Table>
-
-        </div>
-
-
+      <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+        <h3>Charting in your region!</h3>
+        <Table style={{width: '100%', justifyContent: 'center'}} dataSource={this.state.userRegionResults} columns={chartColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+      </div>
+      <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+        <h3>Charting in {this.state.regionNames[0]}</h3>
+        <Table dataSource={this.state.region1Results} columns={chartColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+      </div>
+      <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+        <h3>Charting in {this.state.regionNames[1]}</h3>
+        <Table dataSource={this.state.region2Results} columns={chartColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+      </div>
+      <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+        <h3>Charting in {this.state.regionNames[2]}</h3>
+        <Table dataSource={this.state.region3Results} columns={chartColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+      </div>
       </div>
     )
   }
-
 }
 
 export default ChartsPage
