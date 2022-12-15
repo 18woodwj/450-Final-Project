@@ -11,7 +11,7 @@ class MenuBar extends React.Component {
     render() {
         return(
       <Navbar type="dark" theme="primary" expand="md">
-        <NavbarBrand href="/">Spotify Helper</NavbarBrand>
+        <NavbarBrand href="/songs"><b>Spotify Helper</b></NavbarBrand>
           <Nav navbar>
           <NavItem>
             <NavLink active href="/songs">
@@ -20,17 +20,17 @@ class MenuBar extends React.Component {
           </NavItem>
           <NavItem>
             <NavLink active  href="/saved" >
-              Matches
+              Saved
             </NavLink>
           </NavItem>
           <NavItem>
             <NavLink active href="/charts">
-              Songs
+              Charts
             </NavLink>
           </NavItem>
           <NavItem>
             <NavLink active href="/wrapped">
-              Songs
+              Wrapped
             </NavLink>
           </NavItem>
         </Nav>

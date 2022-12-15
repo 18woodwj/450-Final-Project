@@ -14,10 +14,10 @@ app.use(session({secret: "anyrandomstring", user_id: 1}));
 app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }));
 
 // Route 1 - register as GET 
-app.get('/register', routes.login)
+//app.get('/register', routes.login)
 
-// Route 1 - register as GET 
-app.get('/login', routes.login)
+// Post a new user to the database
+app.post('/authenticate', routes.authenticate)
 
 // Route 2 - register as GET 
 app.get('/songs', routes.songs)
