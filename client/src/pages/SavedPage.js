@@ -4,7 +4,8 @@ import React from 'react';
 import {
   Table,
   Select,
-  Pagination
+  Pagination,
+  Radio
 } from 'antd'
 
 import MenuBar from '../components/MenuBar';
@@ -66,9 +67,20 @@ class SavedPage extends React.Component {
 
   render() {
 
-    return (      
+    return (   
+         
       <div>
         <MenuBar />
+
+      <div align = "center" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+      <Radio.Group defaultValue="a" size="large">
+        <Radio.Button value="a">Just completed Huffman encoding</Radio.Button>
+        <Radio.Button value="b">545 got me down</Radio.Button>
+        <Radio.Button value="c">Doing 160 contradiction proof</Radio.Button>
+        <Radio.Button value="d">262</Radio.Button>
+      </Radio.Group>
+      </div>
+
       <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3>Your Pottruck favorites</h3>
         <Table dataSource={this.state.results} columns={songColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
