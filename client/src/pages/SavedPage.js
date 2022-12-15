@@ -33,6 +33,18 @@ const songColumns = [
     dataIndex: 'Duration',
     key: 'Duration',    
   },
+  {
+    title: 'Add song!',
+    key: 'key',
+    dataIndex: 'key',
+    width: 50,
+    align: 'center',
+    render: (text, record) => (
+     <button onClick={()=> console.log("hello")}>
+       {"+++"}
+     </button>
+    ),
+  },
 
 ];
 
