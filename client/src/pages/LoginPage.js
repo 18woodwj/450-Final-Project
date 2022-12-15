@@ -12,12 +12,17 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { login } from '../fetcher'
+import { Redirect } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+
 
 
 
 const theme = createTheme();
 
 export default function SignIn() {
+  const history = useHistory();
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -26,11 +31,15 @@ export default function SignIn() {
     });
 
     login(data.get('email')).then(res => {
+      console.log(res)
+
       if (res.error) {
-        console.log("Error querying database")
+        console.log(res.error);
       } else if (res.success) {
         console.log("Successfully logged in!")
-        // here handle redirection to new page
+
+        history.push("/songs"); 
+        
       } else {
         console.log("User does not exist, create account.")
       }
@@ -75,7 +84,7 @@ export default function SignIn() {
             </Button>
             <Grid container>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/register" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

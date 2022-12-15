@@ -20,7 +20,9 @@ const dance = "danceability > 0.60 AND liveness > 0.23"
  * if so redirect to songs page else flag unindent user
  */
 async function authenticate(req, res) {
-    const email = req.params.email
+    console.log("Authenticate")
+    const email = req.query.email
+    console.log(email)
     req.session.email = email
 
     connection.query(
@@ -28,20 +30,19 @@ async function authenticate(req, res) {
         SELECT email FROM Users WHERE email = '${email}'
         `, function(error, results) {
             if (error) {
-                res.JSON({error: error})
-
+                res.json({error: error})
             } else {
-                if (results != null) {
-                    res.JSON({success: true})
-
+                if (results) {
+                    console.log("Email found!")
+                    res.json({success: true})
                 } else {
-                    res.JSON({success: false})
+                    console.log("Email not found, create account!")
+                    res.json({success: false})
                 }
                 
             }
         }
     )
-
 }
 
 /**
