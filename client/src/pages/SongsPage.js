@@ -65,8 +65,7 @@ class SongsPage extends React.Component {
 
   componentDidMount() {
 
-    getSongs(4, "Egypt").then(res => {
-
+    getSongs().then(res => {
       this.setState({ happyResults: res.results[0].happy })
       this.setState({ sadResults: res.results[1].sad })
       this.setState({loading: false})

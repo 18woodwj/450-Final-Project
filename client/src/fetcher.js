@@ -14,15 +14,15 @@ const login = async(email) => {
     return res.json()
 }
 
-const register = async(user_id, email, region) => {
-    var res = await fetch(`http://${config.server_host}:${config.server_port}/register?user=${user_id}&email=${email}&region=${region}`, {
+const register = async(email, region) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/register?email=${email}&region=${region}`, {
         method: 'POST',
     })
     return res.json()
 }
 
-const getSongs = async (user_id, region) => {
-    var res = await fetch(`http://${config.server_host}:${config.server_port}/songs?user=${user_id}&region=${region}`, {
+const getSongs = async () => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/songs`, {
         method: 'GET',
     })
     return res.json()

@@ -6,15 +6,15 @@ const routes = require('./routes')
 const config = require('./config.json')
 
 const app = express();
-const session = require('express-session');
+var session = require('express-session');
 
-app.use(session({secret: "anyrandomstring", user_id: 1}));
+app.use(session({secret: "anyrandomstring"}));
 
 // whitelist localhost 3000
 app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }));
 
 // Register a new user by adding them to the Users table
-app.get('/register', routes.register)
+app.post('/register', routes.register)
 
 // Post a new user to the database
 app.post('/authenticate', routes.authenticate)

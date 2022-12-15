@@ -33,8 +33,18 @@ export default function Register() {
     const data = new FormData(event.currentTarget);
     console.log({
       email: data.get('email'),
-      region: data.get('region_select')
+      region: region
     });
+    // data populated from the form here, send to backend
+    register(data.get('email'), region).then(res => {
+      if (res.error) {
+        console.log(res.error)
+      } else {
+        console.log("Account created!");
+        // redirect to songs page here
+      }
+      
+    })
     
 
   };
@@ -52,7 +62,7 @@ export default function Register() {
           }}
         >
           <Typography component="h1" variant="h5">
-            Enter your info to get started!
+            Sign Up
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField

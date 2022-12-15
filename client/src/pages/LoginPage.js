@@ -38,9 +38,7 @@ export default function SignIn() {
       } else if (res.success) {
         console.log("Successfully logged in!")
 
-        history.push('/songs', {
-          state: res.data[0]
-        })
+        history.push('/songs');
         
       } else {
         console.log("User does not exist, create account.")

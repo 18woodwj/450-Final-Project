@@ -1,6 +1,8 @@
 const config = require('./config.json')
 const mysql = require('mysql');
 
+var session;
+
 const connection = mysql.createConnection({
     host: config.rds_host,
     user: config.rds_user,
@@ -15,6 +17,8 @@ connection.connect();
  * if so redirect to songs page else flag unindent user
  */
 async function authenticate(req, res) {
+    session = req.session
+    
     console.log("Authenticate")
     const email = req.query.email
     console.log(email)
@@ -29,8 +33,10 @@ async function authenticate(req, res) {
                 if (results) {
                     console.log("Email found!")
                     console.log(results)
-                    req.session.user_id = results[0].user_id
-                    req.session.region = results[0].region
+                    session.user_id = results[0].user_id
+                    session.region = results[0].region
+                    session.email = email
+                    console.log(req.session)
                     res.json({success: true, data: results})
                 } else {
                     console.log("Email not found, create account!")
@@ -46,7 +52,8 @@ async function authenticate(req, res) {
  * Register a new user, adding them to the database
  */
 async function register(req, res) {
-    console.log("Register")
+    session = req.session
+    console.log("ROUTE: register")
     const email = req.query.email
     const region = req.query.region
 
@@ -55,24 +62,46 @@ async function register(req, res) {
 
     connection.query(
         `
-        INSERT INTO Users(user_id, email, region)
-        VALUES
-            ('${user}', "${email}", "${region}")       
-        
+        SELECT max(user_id) as latest_u FROM Users
+
         `, function(error, results) {
             if (error) {
-                res.json({error: error})
+                res.json({error: error});
             } else {
-                console.log("HERE")
-                console.log(results)
+                var new_u = results[0].latest_u + 1
+                connection.query(
+                    `
+                    INSERT INTO Users(user_id, email, region)
+                    VALUES
+                        (${new_u}, "${email}", "${region}");
+                    `, function(error, results) {
+                        if (error) {
+                            res.json({error: error})
+                        } else {
+                            console.log("User successfully created!")
+                            session.user_id = new_u
+                            session.email = email
+                            session.region = region
+                            res.json({success: true})
+                        }
+
+                    }
+                    
+                    
+                    
+                )
+
             }
+
         }
     )
+    
 }
 
 async function friends(req, res) {
-    req.session.user_id = 1
-    req.session.user_region = "Argentina"
+
+    console.log("ROUTES: friends")
+    console.log(session.email)
 
     connection.query(`
         WITH non_friends AS (
@@ -82,7 +111,7 @@ async function friends(req, res) {
                 SELECT f2_id
                 FROM Friends F
                 WHERE F.f1_id = 1 AND U.user_id = F.f2_id
-            ) AND U.user_id <> ${req.session.user_id}
+            ) AND U.user_id <> ${session.user_id}
         ), non_friend_aggregates AS (
             SELECT email, AVG(energy) AS avg_energy, AVG(danceability) AS avg_dance,
                             AVG(loudness) AS avg_loud, AVG(acousticness) AS avg_acoust
@@ -96,7 +125,7 @@ async function friends(req, res) {
             FROM Songs S
             JOIN (SELECT song_id
                     FROM Saved_Songs
-                    WHERE user_id = ${req.session.user_id}) Me on S.id = Me.song_id
+                    WHERE user_id = ${session.user_id}) Me on S.id = Me.song_id
         )
         SELECT email, ABS(my_energy - avg_energy) AS e_dif,
                 ABS(my_dance - avg_dance) AS d_dif, ABS(my_energy - avg_energy) AS e_dif,
@@ -113,8 +142,6 @@ async function friends(req, res) {
 }
 
 async function friends(req, res) {
-    req.session.user_id = 1
-    req.session.user_region = "Argentina"
 
     connection.query(`
         WITH non_friends AS (
@@ -158,8 +185,9 @@ async function friends(req, res) {
  * Grab a selection of songs and sort by category
  */
 async function songs(req, res) {
-    console.log(req.query.user)
-    console.log(req.query.region)
+    console.log(session.user_id)
+    console.log(session.email)
+    console.log(session.region)
 
     // store results: recommended songs for mood as well as suggested users
     t_results = []
@@ -171,8 +199,7 @@ async function songs(req, res) {
     WITH charting_sample AS (
         SELECT DISTINCT song_id
         FROM Charting C
-        WHERE region = '${req.query.region}'
-        LIMIT 2000
+        WHERE region = '${session.region}'
     )
     SELECT name, artists, album,
            RIGHT(SEC_TO_TIME(ROUND(duration_ms / 1000, 0)), 5) AS Duration
@@ -180,7 +207,7 @@ async function songs(req, res) {
     JOIN charting_sample CS ON S.id = CS.song_id
     WHERE NOT EXISTS (SELECT song_id
                       FROM Saved_Songs SS
-                      WHERE SS.user_id = ${req.query.user} AND S.id = SS.song_id)
+                      WHERE SS.user_id = ${session.user_id} AND S.id = SS.song_id)
                       `
 
     const trailing_string = `
@@ -213,8 +240,6 @@ async function songs(req, res) {
  */
 async function charts(req, res) {
     //TODO: Cynth
-    req.session.user_id = 4 //TODO: change this later
-    req.session.user_region = "United States" //TODO: change this later
     regions = []
     t_results = []
 
@@ -311,7 +336,6 @@ async function charts(req, res) {
  */
 async function wrapped(req, res) {
     //TODO: John
-    req.session.user_id = 3 // to replace later with a response object
     t_results = []
     connection.query(
         `SELECT SS.user_id, SUBSTRING_INDEX(S.artists, ',', 1) as main_artist, COUNT(S.id) as num FROM Saved_Songs SS
@@ -419,8 +443,6 @@ async function wrapped(req, res) {
  * 
  */
 async function saved(req, res) {
-    req.session.user_id = 1
-    req.session.user_region = "Argentina"
 
     var curr_mood = req.query.mood;
     const happy = "danceability >= 0.6 AND energy >= 0.6 AND liveness >= 0.21"

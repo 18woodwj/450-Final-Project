@@ -23,10 +23,10 @@ ReactDOM.render(
   <div>
     <Router>
       <Switch>
-	  <Route exact
-							path="/LoginPage"
+	  	<Route exact
+							path="/"
 							render={() => (
-								<SongsPage />
+								<LoginPage />
 							)}/>
 
         <Route exact
