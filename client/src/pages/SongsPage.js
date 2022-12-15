@@ -1,5 +1,7 @@
 import '../app.css'
 import { useHistory } from 'react-router-dom';
+import { putSong } from '../fetcher'
+
 
 
 import React from 'react';
@@ -42,7 +44,17 @@ const songColumns = [
     width: 50,
     align: 'center',
     render: (text, record) => (
-     <button onClick={()=> console.log("hello")}>
+     <button onClick={()=> putSong(record.artists, record.name).then(res => {
+      if (res.error) {
+        console.log(res.error)
+      } else {
+        console.log("fuck yes");
+        // do something here to display a message on the screen
+
+
+      }
+
+     })}>
        {"+++"}
      </button>
     ),
@@ -59,6 +71,7 @@ class SongsPage extends React.Component {
       happyResults: [],
       sadResults: [],
       loading : true,
+      songToAdd: []
     }
   }
 
