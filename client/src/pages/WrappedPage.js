@@ -88,19 +88,6 @@ const atributesColumns = [
     dataIndex: 'avg_a',
     key: 'avg_a',    
   },
-  {
-    title: 'Add song!',
-    key: 'key',
-    dataIndex: 'key',
-    width: 50,
-    align: 'center',
-    render: (text, record) => (
-     <button onClick={()=> console.log("hello")}>
-       {"+++"}
-     </button>
-    ),
-  }
-
 ];
 
 class WrappedPage extends React.Component {
