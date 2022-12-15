@@ -39,6 +39,48 @@ async function authenticate(req, res) {
 
 }
 
+async function friends(req, res) {
+    req.session.user_id = 1
+    req.session.user_region = "Argentina"
+
+    connection.query(`
+        WITH non_friends AS (
+            SELECT user_id, email
+            FROM Users U
+            WHERE NOT EXISTS (
+                SELECT f2_id
+                FROM Friends F
+                WHERE F.f1_id = 1 AND U.user_id = F.f2_id
+            ) AND U.user_id <> ${req.session.user_id}
+        ), non_friend_aggregates AS (
+            SELECT email, AVG(energy) AS avg_energy, AVG(danceability) AS avg_dance,
+                            AVG(loudness) AS avg_loud, AVG(acousticness) AS avg_acoust
+            FROM non_friends N
+                JOIN Saved_Songs SS ON SS.user_id = N.user_id
+                JOIN Songs S ON S.id = SS.song_id
+            GROUP BY email
+        ), my_stats AS (
+            SELECT AVG(energy) AS my_energy, AVG(danceability) AS my_dance,
+                            AVG(loudness) AS my_loud, AVG(acousticness) AS my_acoust
+            FROM Songs S
+            JOIN (SELECT song_id
+                    FROM Saved_Songs
+                    WHERE user_id = ${req.session.user_id}) Me on S.id = Me.song_id
+        )
+        SELECT email, ABS(my_energy - avg_energy) AS e_dif,
+                ABS(my_dance - avg_dance) AS d_dif, ABS(my_energy - avg_energy) AS e_dif,
+                ABS(my_loud - avg_loud) AS l_dif, ABS(my_acoust - avg_acoust) AS a_dif,
+                (SELECT e_dif) + (SELECT d_dif) + (SELECT l_dif) + (SELECT a_dif) AS total_distance
+        FROM non_friend_aggregates, my_stats
+        ORDER BY total_distance;`, function (error, results, fields) {
+        if (error) {
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }
+    })
+}
+
 /**
  * Grab a selection of songs and sort by category
  */
@@ -82,43 +124,7 @@ async function songs(req, res) {
                     res.json({ error: error })
                 } else if (results) {
                     t_results.push({sad: results});
-                    connection.query(`
-                    WITH non_friends AS (
-                        SELECT user_id, email
-                        FROM Users U
-                        WHERE NOT EXISTS (
-                            SELECT f2_id
-                            FROM Friends F
-                            WHERE F.f1_id = 1 AND U.user_id = F.f2_id
-                        ) AND U.user_id <> ${req.session.user_id}
-                    ), non_friend_aggregates AS (
-                        SELECT email, AVG(energy) AS avg_energy, AVG(danceability) AS avg_dance,
-                                        AVG(loudness) AS avg_loud, AVG(acousticness) AS avg_acoust
-                        FROM non_friends N
-                            JOIN Saved_Songs SS ON SS.user_id = N.user_id
-                            JOIN Songs S ON S.id = SS.song_id
-                        GROUP BY email
-                    ), my_stats AS (
-                        SELECT AVG(energy) AS my_energy, AVG(danceability) AS my_dance,
-                                        AVG(loudness) AS my_loud, AVG(acousticness) AS my_acoust
-                        FROM Songs S
-                        JOIN (SELECT song_id
-                                FROM Saved_Songs
-                                WHERE user_id = ${req.session.user_id}) Me on S.id = Me.song_id
-                    )
-                    SELECT email, ABS(my_energy - avg_energy) AS e_dif,
-                            ABS(my_dance - avg_dance) AS d_dif, ABS(my_energy - avg_energy) AS e_dif,
-                            ABS(my_loud - avg_loud) AS l_dif, ABS(my_acoust - avg_acoust) AS a_dif,
-                            (SELECT e_dif) + (SELECT d_dif) + (SELECT l_dif) + (SELECT a_dif) AS total_distance
-                    FROM non_friend_aggregates, my_stats
-                    ORDER BY total_distance;`, function (error, results, fields) {
-                        if (error) {
-                            res.json({ error: error })
-                        } else if (results) {
-                            t_results.push({friends: results});
-                            res.json({ results: t_results })
-                        }
-                    })
+                    res.json({ results: t_results })
                 }
             });    
         }
@@ -156,7 +162,7 @@ async function charts(req, res) {
         (SELECT avg(S.instrumentalness) AS inavg
         FROM Saved_Songs SS JOIN Songs S ON SS.song_id = S.id JOIN Charting C on SS.song_id = C.song_id
         WHERE user_id = ${req.session.user_id})
-    SELECT DISTINCT(S.name) AS song_name, S.artists
+    SELECT * FROM (SELECT DISTINCT(S.name) AS song_name, S.artists
     FROM Charting C JOIN Songs S ON S.id = C.song_id, dance, energy, acoustic, instrument
     WHERE C.region = "`
 
@@ -166,7 +172,10 @@ async function charts(req, res) {
         (energy.energyavg + 0.1 <= S.energy OR energy.energyavg - 0.1 >= S.energy) AND
         (acoustic.acavg + 0.1 <= S.acousticness OR acoustic.acavg - 0.1 >= S.acousticness) AND
         (instrument.inavg + 0.1 <= S.instrumentalness OR instrument.inavg - 0.1 >= S.instrumentalness)
-    LIMIT 20;`
+    LIMIT 500) Wrapper
+    ORDER BY RAND()
+    LIMIT 20
+    ;`
 
     connection.query(
         `WITH regions AS (
@@ -199,10 +208,11 @@ async function charts(req, res) {
                                     } else if (results) {
                                         t_results.push({region3: results});
                                         connection.query(
-                                            `SELECT DISTINCT(S.name) AS song_name, S.artists
+                                            `SELECT * FROM (SELECT DISTINCT(S.name) AS song_name, S.artists
                                             FROM Songs S JOIN Charting C on S.id = C.song_id
                                             WHERE C.region = '${req.session.user_region}'
-                                            LIMIT 20;`, function(error, results, fields) {
+                                            LIMIT 20) Wrap
+                                            ORDER BY RAND();`, function(error, results, fields) {
                                                 if (error) {
                                                     res.json({ error: error})
                                                 } else if (results) {
@@ -375,5 +385,6 @@ module.exports = {
     songs,
     saved,
     charts,
-    wrapped
+    wrapped,
+    friends
 }

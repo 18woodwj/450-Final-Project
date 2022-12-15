@@ -35,10 +35,18 @@ const getSaved = async (mood) => {
     return res.json()
 }
 
+const getFriends = async (mood) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/friends`, {
+        method: 'GET',
+    })
+    return res.json()
+}
+
 export {
     getWrapped,
     getSongs,
     getCharts,
     login,
-    getSaved
+    getSaved,
+    getFriends
 }

@@ -17,6 +17,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import SavedPage from './pages/SavedPage';
 import SongsPage from './pages/SongsPage';
+import FriendsPage from './pages/FriendsPage';
 
 ReactDOM.render(
   <div>
@@ -51,6 +52,11 @@ ReactDOM.render(
 							path="/register"
 							render={() => (
 								<RegisterPage />
+							)}/>
+		<Route exact
+							path="/friends"
+							render={() => (
+								<FriendsPage />
 							)}/>
       </Switch>
     </Router>
