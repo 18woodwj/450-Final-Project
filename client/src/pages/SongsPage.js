@@ -78,7 +78,8 @@ class SongsPage extends React.Component {
     this.state = {
       happyResults: [],
       sadResults: [],
-      friendResults: []
+      friendResults: [],
+      loading : true,
     }
   }
 
@@ -89,11 +90,25 @@ class SongsPage extends React.Component {
       this.setState({ happyResults: res.results[0].happy })
       this.setState({ sadResults: res.results[1].sad })
       this.setState({ friendResults: res.results[2].friends })
+      this.setState({loading: false})
     })
   }
 
   render() {
-
+    if(this.state.loading) {
+      return <span className="Loader">
+     <div className="Loader-indicator" >
+       <h1>
+         <span>Chugging away... Your songs are loading...</span>
+         <span className="Loader-ellipsis" >
+           <span className="Loader-ellipsisDot">.</span>
+           <span className="Loader-ellipsisDot">.</span>
+           <span className="Loader-ellipsisDot">.</span>
+         </span>
+       </h1>
+     </div>
+   </span>
+   }
     return (      
       <div>
         <MenuBar />
