@@ -18,18 +18,20 @@ async function authenticate(req, res) {
     console.log("Authenticate")
     const email = req.query.email
     console.log(email)
-    req.session.email = email
 
     connection.query(
         `
-        SELECT email FROM Users WHERE email = '${email}'
+        SELECT user_id, region FROM Users WHERE email = '${email}'
         `, function(error, results) {
             if (error) {
                 res.json({error: error})
             } else {
                 if (results) {
                     console.log("Email found!")
-                    res.json({success: true})
+                    console.log(results)
+                    req.session.user_id = results[0].user_id
+                    req.session.region = results[0].region
+                    res.json({success: true, data: results})
                 } else {
                     console.log("Email not found, create account!")
                     res.json({success: false})
@@ -41,11 +43,39 @@ async function authenticate(req, res) {
 }
 
 /**
+ * Register a new user, adding them to the database
+ */
+async function register(req, res) {
+    console.log("Register")
+    const email = req.query.email
+    const region = req.query.region
+
+
+    // Outer query should return new user_id by incrementing the max user_id from the Users table
+
+    connection.query(
+        `
+        INSERT INTO Users(user_id, email, region)
+        VALUES
+            ('${user}', "${email}", "${region}")       
+        
+        `, function(error, results) {
+            if (error) {
+                res.json({error: error})
+            } else {
+                console.log("HERE")
+                console.log(results)
+            }
+        }
+    )
+}
+
+/**
  * Grab a selection of songs and sort by category
  */
 async function songs(req, res) {
-    req.session.user_id = 1
-    req.session.user_region = "Argentina"
+    console.log(req.query.user)
+    console.log(req.query.region)
 
     // store results: recommended songs for mood as well as suggested users
     t_results = []
@@ -57,7 +87,7 @@ async function songs(req, res) {
     WITH charting_sample AS (
         SELECT DISTINCT song_id
         FROM Charting C
-        WHERE region = '${req.session.user_region}'
+        WHERE region = '${req.query.region}'
         LIMIT 2000
     )
     SELECT name, artists, album,
@@ -66,7 +96,7 @@ async function songs(req, res) {
     JOIN charting_sample CS ON S.id = CS.song_id
     WHERE NOT EXISTS (SELECT song_id
                       FROM Saved_Songs SS
-                      WHERE SS.user_id = ${req.session.user_id} AND S.id = SS.song_id)
+                      WHERE SS.user_id = ${req.query.user} AND S.id = SS.song_id)
                       `
 
     const trailing_string = `
@@ -91,7 +121,7 @@ async function songs(req, res) {
                             SELECT f2_id
                             FROM Friends F
                             WHERE F.f1_id = 1 AND U.user_id = F.f2_id
-                        ) AND U.user_id <> ${req.session.user_id}
+                        ) AND U.user_id <> ${req.query.user}
                     ), non_friend_aggregates AS (
                         SELECT email, AVG(energy) AS avg_energy, AVG(danceability) AS avg_dance,
                                         AVG(loudness) AS avg_loud, AVG(acousticness) AS avg_acoust
@@ -105,7 +135,7 @@ async function songs(req, res) {
                         FROM Songs S
                         JOIN (SELECT song_id
                                 FROM Saved_Songs
-                                WHERE user_id = ${req.session.user_id}) Me on S.id = Me.song_id
+                                WHERE user_id = ${req.query.user}) Me on S.id = Me.song_id
                     )
                     SELECT email, ABS(my_energy - avg_energy) AS e_dif,
                             ABS(my_dance - avg_dance) AS d_dif, ABS(my_energy - avg_energy) AS e_dif,
@@ -376,5 +406,6 @@ module.exports = {
     songs,
     saved,
     charts,
-    wrapped
+    wrapped,
+    register
 }

@@ -1,4 +1,6 @@
 import '../app.css'
+import { useHistory } from 'react-router-dom';
+
 
 import React from 'react';
 import {
@@ -111,13 +113,17 @@ class SongsPage extends React.Component {
 
   componentDidMount() {
 
-    getSongs().then(res => {
+    getSongs(4, "Egypt").then(res => {
+
       this.setState({ happyResults: res.results[0].happy })
       this.setState({ sadResults: res.results[1].sad })
       this.setState({ friendResults: res.results[2].friends })
       this.setState({loading: false})
     })
-  }
+    
+
+ }
+    
 
   render() {
     if(this.state.loading) {

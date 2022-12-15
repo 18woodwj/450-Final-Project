@@ -11,7 +11,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { login } from '../fetcher'
+import { login, getSongs } from '../fetcher'
 import { Redirect } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 
@@ -38,7 +38,9 @@ export default function SignIn() {
       } else if (res.success) {
         console.log("Successfully logged in!")
 
-        history.push("/songs"); 
+        history.push('/songs', {
+          state: res.data[0]
+        })
         
       } else {
         console.log("User does not exist, create account.")

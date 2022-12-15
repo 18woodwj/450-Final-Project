@@ -1,280 +1,111 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import Form from "./utilities/Forms";
+import * as React from 'react';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import Link from '@mui/material/Link';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { register } from '../fetcher'
+import { useHistory } from 'react-router-dom';
 
-const Register = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [validate, setValidate] = useState({});
-  const [showPassword, setShowPassword] = useState(false);
 
-  const dummyData = [
-    "Australia",
-    "Austria",
-    "Belgium",
-    "Canada",
-    "Colombia",
-    "Czech Republic",
-    "Denmark",
-    "Ecuador",
-    "Finland",
-    "France",
-    "Germany",
-    "Global",
-    "Greece",
-    "Guatemala",
-    "Hong Kong",
-    "Hungary",
-    "Indonesia",
-    "Ireland",
-    "Italy",
-    "Japan",
-    "Lithuania",
-    "Malaysia",
-    "Mexico",
-    "Netherlands",
-    "New Zealand",
-    "Norway",
-    "Philippines",
-    "Poland",
-    "Portugal",
-    "Singapore",
-    "Slovakia",
-    "Spain",
-    "Sweden",
-    "Switzerland",
-    "Taiwan",
-    "Turkey",
-    "United Kingdom",
-    "United States",
-    "Iceland",
-    "Argentina",
-    "Chile",
-    "Costa Rica",
-    "Dominican Republic",
-    "Honduras",
-    "Panama",
-    "Paraguay",
-    "Peru",
-    "Estonia",
-    "Latvia",
-    "Uruguay",
-    "Luxembourg",
-    "Bolivia",
-    "Nicaragua",
-    "El Salvador",
-    "Egypt",
-    "Thailand",
-    "Vietnam",
-    "Israel",
-    "Romania",
-    "South Africa",
-    "Bulgaria",
-    "United Arab Emirates",
-    "Saudi Arabia",
-    "India",
-    "Russia",
-    "Ukraine",
-    "Andorra",
-    "Morocco",
-    "South Korea"
-    ]
 
-  const validateRegister = () => {
-    let isValid = true;
 
-    let validator = Form.validator({
-      name: {
-        value: name,
-        isRequired: true,
-      },
-      email: {
-        value: email,
-        isRequired: true,
-        isEmail: true,
-      },
-      password: {
-        value: password,
-        isRequired: true,
-        minLength: 6,
-      },
+
+const theme = createTheme();
+
+export default function Register() {
+  const history = useHistory();
+  const [region, setRegion] = React.useState('');
+  const handleChange = (event) => {
+    setRegion(event.target.value);
+  };
+
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    console.log({
+      email: data.get('email'),
+      region: data.get('region_select')
     });
+    
 
-    if (validator !== null) {
-      setValidate({
-        validate: validator.errors,
-      });
-
-      isValid = false;
-    }
-    return isValid;
-  };
-
-  const register = (e) => {
-    e.preventDefault();
-
-    const validate = validateRegister();
-
-    if (validate) {
-      setValidate({});
-      setName("");
-      setEmail("");
-      setPassword("");
-      alert("Successfully Register User");
-    }
-  };
-
-  const togglePassword = (e) => {
-    if (showPassword) {
-      setShowPassword(false);
-    } else {
-      setShowPassword(true);
-    }
   };
 
   return (
-    <div className="row g-0 auth-wrapper">
-      <div className="col-12 col-md-5 col-lg-6 h-100 auth-background-col">
-        <div className="auth-background-holder"></div>
-        <div className="auth-background-mask"></div>
-      </div>
+    <ThemeProvider theme={theme}>
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <Box
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Typography component="h1" variant="h5">
+            Enter your info to get started!
+          </Typography>
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+            />
 
-      <div className="col-12 col-md-7 col-lg-6 auth-main-col text-center">
-        <div className="d-flex flex-column align-content-end">
-          <div className="auth-body mx-auto">
-            <p>Create your Account</p>
-            <div className="auth-form-container text-start">
-              <form
-                className="auth-form"
-                method="POST"
-                onSubmit={register}
-                autoComplete={"off"}
-              >
-                <div className="name mb-3">
-                  <input
-                    type="text"
-                    className={`form-control ${
-                      validate.validate && validate.validate.name
-                        ? "is-invalid "
-                        : ""
-                    }`}
-                    id="name"
-                    name="name"
-                    value={name}
-                    placeholder="Login"
-                    onChange={(e) => setName(e.target.value)}
-                  />
+            <Select
+              margin="normal"
+              required
+              fullWidth
+              id="region"
+              value={region}
+              label="Region"
+              name="region"
+              onChange={handleChange}
+            >
+              <MenuItem value={"Argentina"}>Argentina</MenuItem>
+              <MenuItem value={"Egypt"}>Egypt</MenuItem>
+              <MenuItem value={"Belgium"}>Belgium</MenuItem>
+              <MenuItem value={"Canada"}>Canada</MenuItem>
+              <MenuItem value={"Columbia"}>Columbia</MenuItem>
+              <MenuItem value={"Czech Republic"}>Czech Republic</MenuItem>
+              <MenuItem value={"Denmark"}>Denmark</MenuItem>
+              <MenuItem value={"Ecuador"}>Ecuador</MenuItem>
+              <MenuItem value={"Finland"}>Finland</MenuItem>
+              <MenuItem value={"France"}>France</MenuItem>
+              <MenuItem value={"Germany"}>Germany</MenuItem>
+              <MenuItem value={"Ireland"}>Ireland</MenuItem>
+              <MenuItem value={"Greece"}>Greece</MenuItem>
+              <MenuItem value={"Guatemala"}>Guatemala</MenuItem>
+              <MenuItem value={"Hong Kong"}>Hong Kong</MenuItem>
+              <MenuItem value={"Hungary"}>Hungary</MenuItem>
+              <MenuItem value={"Indonesia"}>Indonesia</MenuItem>
+            </Select>
 
-                  <div
-                    className={`invalid-feedback text-start ${
-                      validate.validate && validate.validate.name
-                        ? "d-block"
-                        : "d-none"
-                    }`}
-                  >
-                    {validate.validate && validate.validate.name
-                      ? validate.validate.name[0]
-                      : ""}
-                  </div>
-                </div>
-
-                <div className="email mb-3">
-                  <input
-                    type="email"
-                    className={`form-control ${
-                      validate.validate && validate.validate.email
-                        ? "is-invalid "
-                        : ""
-                    }`}
-                    id="email"
-                    name="email"
-                    value={email}
-                    placeholder="Email"
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-
-                  <div
-                    className={`invalid-feedback text-start ${
-                      validate.validate && validate.validate.email
-                        ? "d-block"
-                        : "d-none"
-                    }`}
-                  >
-                    {validate.validate && validate.validate.email
-                      ? validate.validate.email[0]
-                      : ""}
-                  </div>
-                </div>
-
-                <div className="password mb-3">
-                  {/* <div className="input-group">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      className={`form-control ${
-                        validate.validate && validate.validate.password
-                          ? "is-invalid "
-                          : ""
-                      }`}
-                      name="password"
-                      id="password"
-                      value={password}
-                      placeholder="Password"
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-
-                    <button
-                      type="button"
-                      className="btn btn-outline-primary btn-sm"
-                      onClick={(e) => togglePassword(e)}
-                    >
-                      <i
-                        className={
-                          showPassword ? "far fa-eye" : "far fa-eye-slash"
-                        }
-                      ></i>{" "}
-                    </button>
-
-                    <div
-                      className={`invalid-feedback text-start ${
-                        validate.validate && validate.validate.password
-                          ? "d-block"
-                          : "d-none"
-                      }`}
-                    >
-                      {validate.validate && validate.validate.password
-                        ? validate.validate.password[0]
-                        : ""}
-                    </div>
-                  </div> */}
-                  <div style={{display:'flex',justifyContent:'space-between'}} className="input-group">
-                    <label>Region</label>
-                    <select>{dummyData.map(item=><option key={item}>{item}</option>)}</select>
-                  </div>
-                </div>
-                <div className="text-center">
-                  <button
-                    type="submit"
-                    className="btn btn-primary w-100 theme-btn mx-auto"
-                  >
-                  Register
-                  </button>
-                </div>
-              </form>
-
-              <hr />
-              <div className="auth-option text-center pt-2">
-                Have an account?{" "}
-                <Link className="text-link" to="/login">
-                  Login
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Register
+            </Button>
+          </Box>
+        </Box>
+      </Container>
+    </ThemeProvider>
   );
-};
-
-export default Register;
+}
