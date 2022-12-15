@@ -89,5 +89,6 @@ export {
     getPlayer,
     getMatchSearch,
     getPlayerSearch,
-    login
+    login,
+    getSongs
 }
