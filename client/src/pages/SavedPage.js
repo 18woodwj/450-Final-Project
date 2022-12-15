@@ -61,10 +61,11 @@ class SavedPage extends React.Component {
 
       <div align = "center" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
       <Radio.Group defaultValue="a" size="large">
-        <Radio.Button value="a" onChange={(e)=> getSaved("happy").then(res => {this.setState({ results: res.results })})}>Completed Huffman HW (Happy)</Radio.Button>
-        <Radio.Button value="b" onChange={(e)=> getSaved("sad").then(res => {this.setState({ results: res.results })})}>262 (Sad)</Radio.Button>
-        <Radio.Button value="c" onChange={(e)=> getSaved("think").then(res => {this.setState({ results: res.results })})}>Thinking of contradiction proof (Think)</Radio.Button>
-        <Radio.Button value="d" onChange={(e)=> getSaved("dance").then(res => {this.setState({ results: res.results })})}>Working in neo4j (Dance)</Radio.Button>
+        <Radio.Button value="a" onChange={(e)=> getSaved("").then(res => {this.setState({ results: res.results })})}>All</Radio.Button>
+        <Radio.Button value="b" onChange={(e)=> getSaved("happy").then(res => {this.setState({ results: res.results })})}>Completed Huffman HW (Happy)</Radio.Button>
+        <Radio.Button value="c" onChange={(e)=> getSaved("sad").then(res => {this.setState({ results: res.results })})}>262 (Sad)</Radio.Button>
+        <Radio.Button value="d" onChange={(e)=> getSaved("think").then(res => {this.setState({ results: res.results })})}>Thinking of contradiction proof (Think)</Radio.Button>
+        <Radio.Button value="e" onChange={(e)=> getSaved("dance").then(res => {this.setState({ results: res.results })})}>Working in neo4j (Dance)</Radio.Button>
       </Radio.Group>
       </div>
 

@@ -116,6 +116,7 @@ async function friends(req, res) {
                             AVG(loudness) AS avg_loud, AVG(acousticness) AS avg_acoust
             FROM non_friends N
                 JOIN Saved_Songs SS ON SS.user_id = N.user_id
+                JOIN Charting C ON C.song_id = SS.song_id
                 JOIN Songs S ON S.id = SS.song_id
             GROUP BY email
         ), my_stats AS (
@@ -403,10 +404,10 @@ async function wrapped(req, res) {
 async function saved(req, res) {
 
     var curr_mood = req.query.mood;
-    const happy = "danceability >= 0.6 AND energy >= 0.6 AND liveness >= 0.21"
-    const sad = "liveness < 0.19 AND energy < 0.55 AND danceability < 0.50"
-    const think = "energy < 0.5 AND acousticness > 0.34"
-    const dance = "danceability > 0.60 AND liveness > 0.23"
+    const happy = "AND danceability >= 0.6 AND energy >= 0.6 AND liveness >= 0.21"
+    const sad = "AND liveness < 0.19 AND energy < 0.55 AND danceability < 0.50"
+    const think = "AND energy < 0.5 AND acousticness > 0.34"
+    const dance = "AND danceability > 0.60 AND liveness > 0.23"
 
     if (curr_mood == "happy") {
         curr_mood = happy
@@ -414,16 +415,20 @@ async function saved(req, res) {
         curr_mood = sad
     } else if (curr_mood == "think") {
         curr_mood = think
-    } else {
+    } else if (curr_mood == "dance") {
         curr_mood = dance
+    } else  {
+        curr_mood = "AND"
     }
+
+
 
     connection.query(`
     SELECT name, artists, album,
     RIGHT(SEC_TO_TIME(ROUND(duration_ms / 1000, 0)), 5) AS Duration
     FROM Songs S JOIN Saved_Songs SS on S.id = SS.song_id
     WHERE SS.user_id = ${req.session.user_id}
-    AND + ${curr_mood}
+    ${curr_mood}
     ORDER BY RAND()`, function (error, results, fields) {
         if (error) {
             res.json({ error: error })
