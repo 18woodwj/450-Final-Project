@@ -109,7 +109,7 @@ class SongsPage extends React.Component {
   render() {
     if(this.state.loading) {
       return <span className="Loader">
-     <div style={{ color: "green", align = "center", marginTop: '5vh'}} >
+     <div className="Loader-indicator" style={{ color: "green", align: "center", marginTop: '5vh'}} >
        <h1>
          <span>Chugging away... Your songs are loading...</span>
          <span className="Loader-ellipsis" >
@@ -125,15 +125,21 @@ class SongsPage extends React.Component {
       <div>
         <MenuBar />
       <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-        <h3>Pulling up to Smokes playlist!!</h3>
+        <h3 style="color: black; border: 5px solid black; letter-spacing: 5px; padding: 10px;">
+          Pulling up to Smokes playlist!!
+        </h3>
         <Table dataSource={this.state.happyResults} columns={songColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
       <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-        <h3>Sad songs for long VP hours...</h3>
+        <h3 style="color: black; border: 5px solid black; letter-spacing: 5px; padding: 10px;">
+          Sad songs for long VP hours...
+        </h3>
         <Table dataSource={this.state.sadResults} columns={songColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
       <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-        <h3>Suggested friends</h3>
+        <h3 style="color: black; border: 5px solid black; letter-spacing: 5px; padding: 10px;">
+          Suggested friends
+        </h3>
         <Table dataSource={this.state.friendResults} columns={friendColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
       </div>
