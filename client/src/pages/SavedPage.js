@@ -1,6 +1,7 @@
 import '../app.css'
 
 import React from 'react';
+import {Container} from 'react-bootstrap'
 import {
   Table,
   Select,
@@ -70,7 +71,7 @@ class SavedPage extends React.Component {
       </div>
 
       <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-        <h3>Your Pottruck favorites</h3>
+        <h3 style={{color:'green'}}>Your Pottruck favorites</h3>
         <Table dataSource={this.state.results} columns={songColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
       </div>

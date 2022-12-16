@@ -1,10 +1,12 @@
 import '../app.css'
+
 import { useHistory } from 'react-router-dom';
 import { putSong } from '../fetcher'
 
 
 
 import React from 'react';
+import {Container} from 'react-bootstrap'
 import {
   Table,
   Select,
@@ -91,8 +93,8 @@ class SongsPage extends React.Component {
   render() {
     if(this.state.loading) {
       return <span className="Loader">
-     <div className="Loader-indicator" style={{ "color" : "green", "text-align" : "center", marginTop: '45vh'}} >
-       <h1>
+     <div className="Loader-indicator" style={{ "color" : 'green', "textAlign" : "center", marginTop: '45vh'}} >
+       <h1 style={{color:'green'}}>
          <span>Chugging away... Your songs are loading...</span>
          <span className="Loader-ellipsis" >
            <span className="Loader-ellipsisDot">.</span>
@@ -106,18 +108,20 @@ class SongsPage extends React.Component {
     return (      
       <div>
         <MenuBar />
-      <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-        <h3>
-          Pulling up to Smokes playlist!!
-        </h3>
-        <Table dataSource={this.state.happyResults} columns={songColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
-      </div>
-      <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-        <h3>
-          Sad songs for long VP hours...
-        </h3>
-        <Table dataSource={this.state.sadResults} columns={songColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
-      </div>
+        <Container className = "container-row">
+          <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+            <h3 style={{color:'green'}}>
+              Pulling up to Smokes playlist!!
+            </h3>
+            <Table dataSource={this.state.happyResults} columns={songColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+          </div>
+          <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+            <h3 style={{color:'green'}}>
+              Sad songs for long VP hours...
+            </h3>
+            <Table dataSource={this.state.sadResults} columns={songColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+          </div>
+          </Container>
       </div>
     )
   }

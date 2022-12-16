@@ -1,6 +1,7 @@
 import '../app.css'
 
 import React from 'react';
+import {Container} from 'react-bootstrap'
 import {
   Table,
   Select,
@@ -87,7 +88,7 @@ class FriendsPage extends React.Component {
       <div>
       <MenuBar />    
       <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-        <h3>
+        <h3 style={{color:'green'}}>
           Suggested friends
         </h3>
         <Table dataSource={this.state.friendResults} columns={friendColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>

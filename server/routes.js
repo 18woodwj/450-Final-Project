@@ -2,6 +2,7 @@ const config = require('./config.json')
 const mysql = require('mysql');
 
 var session = null;
+var session = null;
 
 const connection = mysql.createConnection({
     host: config.rds_host,
@@ -176,6 +177,7 @@ async function register(req, res) {
 async function friends(req, res) {
     console.log("ROUTES: friends")
     console.log(session.email)
+
 
     connection.query(`
         WITH non_friends AS (
