@@ -127,19 +127,19 @@ class WrappedPage extends React.Component {
         <MenuBar />
       <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3 style={{color:'green'}}>Just how popular were your songs?</h3>
-        <Table dataSource={this.state.chart_regions} columns={regionColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+        <Table class = "table-style" style={{ "border": "1px solid black" }} dataSource={this.state.chart_regions} columns={regionColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
       <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3 style={{color:'green'}}>How does your taste compare to that of your friends?</h3>
-        <Table dataSource={this.state.percentiles} columns={percentileColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+        <Table class = "table-style" style={{ "border": "1px solid black" }} dataSource={this.state.percentiles} columns={percentileColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
       <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3 style={{color:'green'}}>What are some of the common characteristics of your songs?</h3>
-        <Table dataSource={this.state.avg_song_atr} columns={atributesColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+        <Table class = "table-style" style={{ "border": "1px solid black" }} dataSource={this.state.avg_song_atr} columns={atributesColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
       <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3 style={{color:'green'}}>Who were your most featured artists?</h3>
-        <Table dataSource={this.state.artists} columns={artistsColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+        <Table class = "table-style" style={{ "border": "1px solid black" }} dataSource={this.state.artists} columns={artistsColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
 
 

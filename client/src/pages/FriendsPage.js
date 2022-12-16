@@ -91,7 +91,7 @@ class FriendsPage extends React.Component {
         <h3 style={{color:'green'}}>
           Suggested friends
         </h3>
-        <Table dataSource={this.state.friendResults} columns={friendColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+        <Table className = "table-style" style={{ "border": "1px solid black" }} dataSource={this.state.friendResults} columns={friendColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
         </div>
       </div>
     )

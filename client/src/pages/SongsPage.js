@@ -113,13 +113,13 @@ class SongsPage extends React.Component {
             <h3 style={{color:'green'}}>
               Pulling up to Smokes playlist!!
             </h3>
-            <Table dataSource={this.state.happyResults} columns={songColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+            <Table dataSource={this.state.happyResults} style={{ "border": "1px solid black" }} columns={songColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
           </div>
           <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
             <h3 style={{color:'green'}}>
               Sad songs for long VP hours...
             </h3>
-            <Table dataSource={this.state.sadResults} columns={songColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+            <Table dataSource={this.state.sadResults} style={{ "border": "1px solid black" }} columns={songColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
           </div>
           </Container>
       </div>

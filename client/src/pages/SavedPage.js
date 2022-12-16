@@ -72,7 +72,7 @@ class SavedPage extends React.Component {
 
       <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3 style={{color:'green'}}>Your Pottruck favorites</h3>
-        <Table dataSource={this.state.results} columns={songColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+        <Table class = "table-style" style={{ "border": "1px solid black" }} dataSource={this.state.results} columns={songColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
       </div>
     )
