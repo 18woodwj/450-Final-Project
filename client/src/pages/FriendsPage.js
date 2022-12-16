@@ -95,7 +95,6 @@ class FriendsPage extends React.Component {
       </div>
     )
   }
-
 }
 
 export default FriendsPage

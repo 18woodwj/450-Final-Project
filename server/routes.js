@@ -2,6 +2,7 @@ const config = require('./config.json')
 const mysql = require('mysql');
 
 var session = null;
+var session = null;
 
 const connection = mysql.createConnection({
     host: config.rds_host,
@@ -36,7 +37,6 @@ async function authenticate(req, res) {
                     session.user_id = results[0].user_id
                     session.region = results[0].region
                     session.email = email
-                    console.log(req.session)
                     res.json({success: true, data: results})
                 } else {
                     console.log("Email not found, create account!")
@@ -198,6 +198,7 @@ async function friends(req, res) {
                             AVG(loudness) AS avg_loud, AVG(acousticness) AS avg_acoust
             FROM non_friends N
                 JOIN Saved_Songs SS ON SS.user_id = N.user_id
+                JOIN Charting C ON C.song_id = SS.song_id
                 JOIN Songs S ON S.id = SS.song_id
             GROUP BY email
         ), my_stats AS (
@@ -300,7 +301,7 @@ async function charts(req, res) {
         (SELECT avg(S.instrumentalness) AS inavg
         FROM Saved_Songs SS JOIN Songs S ON SS.song_id = S.id JOIN Charting C on SS.song_id = C.song_id
         WHERE user_id = ${session.user_id})
-    SELECT * FROM (SELECT DISTINCT(S.name) AS song_name, S.artists
+    SELECT DISTINCT(S.name) AS song_name, S.artists
     FROM Charting C JOIN Songs S ON S.id = C.song_id, dance, energy, acoustic, instrument
     WHERE C.region = "`
 
@@ -310,10 +311,8 @@ async function charts(req, res) {
         (energy.energyavg + 0.1 <= S.energy OR energy.energyavg - 0.1 >= S.energy) AND
         (acoustic.acavg + 0.1 <= S.acousticness OR acoustic.acavg - 0.1 >= S.acousticness) AND
         (instrument.inavg + 0.1 <= S.instrumentalness OR instrument.inavg - 0.1 >= S.instrumentalness)
-    LIMIT 500) Wrapper
-    ORDER BY RAND()
-    LIMIT 20
-    ;`
+    LIMIT 20;`
+
 
     connection.query(
         `WITH regions AS (
@@ -346,15 +345,15 @@ async function charts(req, res) {
                                     } else if (results) {
                                         t_results.push({region3: results});
                                         connection.query(
-                                            `SELECT * FROM (SELECT DISTINCT(S.name) AS song_name, S.artists
+                                            `SELECT DISTINCT(S.name) AS song_name, S.artists
                                             FROM Songs S JOIN Charting C on S.id = C.song_id
-                                            WHERE C.region = '${session.user_region}'
-                                            LIMIT 20) Wrap
-                                            ORDER BY RAND();`, function(error, results, fields) {
+                                            WHERE C.region = '${session.region}'
+                                            LIMIT 20;`, function(error, results, fields) {
                                                 if (error) {
                                                     res.json({ error: error})
                                                 } else if (results) {
                                                     t_results.push({user_region: results});
+                                                    console.log(t_results)
                                                     res.json({ results: t_results })
                                                 }
                                             }
@@ -369,6 +368,7 @@ async function charts(req, res) {
         }
     )
 }
+
 
 /**
  * 
@@ -482,12 +482,15 @@ async function wrapped(req, res) {
  * 
  */
 async function saved(req, res) {
+    if (session == null) {
+        return res.redirect("/login");
+    }
 
     var curr_mood = req.query.mood;
-    const happy = "danceability >= 0.6 AND energy >= 0.6 AND liveness >= 0.21"
-    const sad = "liveness < 0.19 AND energy < 0.55 AND danceability < 0.50"
-    const think = "energy < 0.5 AND acousticness > 0.34"
-    const dance = "danceability > 0.60 AND liveness > 0.23"
+    const happy = "AND danceability >= 0.6 AND energy >= 0.6 AND liveness >= 0.21"
+    const sad = "AND liveness < 0.19 AND energy < 0.55 AND danceability < 0.50"
+    const think = "AND energy < 0.5 AND acousticness > 0.34"
+    const dance = "AND danceability > 0.60 AND liveness > 0.23"
 
     if (curr_mood == "happy") {
         curr_mood = happy
@@ -495,16 +498,19 @@ async function saved(req, res) {
         curr_mood = sad
     } else if (curr_mood == "think") {
         curr_mood = think
-    } else {
+    } else if (curr_mood == "dance") {
         curr_mood = dance
+    } else  {
+        curr_mood = ""
     }
+
 
     connection.query(`
     SELECT name, artists, album,
     RIGHT(SEC_TO_TIME(ROUND(duration_ms / 1000, 0)), 5) AS Duration
     FROM Songs S JOIN Saved_Songs SS on S.id = SS.song_id
-    WHERE SS.user_id = ${req.session.user_id}
-    AND + ${curr_mood}
+    WHERE SS.user_id = ${session.user_id}
+    ${curr_mood}
     ORDER BY RAND()`, function (error, results, fields) {
         if (error) {
             res.json({ error: error })
