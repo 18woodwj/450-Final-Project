@@ -1,3 +1,4 @@
+
 .spotify-header {
     display: flex;
     flex-direction: column;
@@ -15,4 +16,22 @@
     display: flex;
     flex-direction: row;
     margin-top: 20px;
+  }
+
+  .table-style{
+    border: 1px solid black;
+    border-spacing: 0.5px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    background: light gray;
+  }
+
+  .container-row{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    margin-top: 10px;
   }

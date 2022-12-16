@@ -1,6 +1,7 @@
 import '../app.css'
 
 import React from 'react';
+import {Container} from 'react-bootstrap'
 import {
   Table,
   Pagination,
@@ -125,19 +126,19 @@ class WrappedPage extends React.Component {
       <div>
         <MenuBar />
       <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-        <h3>Just how popular were your songs?</h3>
+        <h3 style={{color:'green'}}>Just how popular were your songs?</h3>
         <Table dataSource={this.state.chart_regions} columns={regionColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
       <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-        <h3>How does your taste compare to that of your friends?</h3>
+        <h3 style={{color:'green'}}>How does your taste compare to that of your friends?</h3>
         <Table dataSource={this.state.percentiles} columns={percentileColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
       <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-        <h3>What are some of the common characteristics of your songs?</h3>
+        <h3 style={{color:'green'}}>What are some of the common characteristics of your songs?</h3>
         <Table dataSource={this.state.avg_song_atr} columns={atributesColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
       <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-        <h3>Who were your most featured artists?</h3>
+        <h3 style={{color:'green'}}>Who were your most featured artists?</h3>
         <Table dataSource={this.state.artists} columns={artistsColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
 
