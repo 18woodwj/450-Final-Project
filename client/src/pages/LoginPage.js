@@ -50,7 +50,10 @@ export default function SignIn() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
+      <Container className = "top">
+      </Container>
+      <Container style = {{"border": "5px solid black"}} component="main" maxWidth="xs">
+        <h3 style = {{textAlign: "center", "padding-top": '30px'}}>Spotify Helper</h3> 
         <CssBaseline />
         <Box
           sx={{

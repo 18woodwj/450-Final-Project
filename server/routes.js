@@ -134,43 +134,63 @@ async function register(req, res) {
     const region = req.query.region
 
 
-    // Outer query should return new user_id by incrementing the max user_id from the Users table
-
+    // First check to see if the user email already exists, if so send a message to the front end
     connection.query(
         `
-        SELECT max(user_id) as latest_u FROM Users
-
+        SELECT * FROM Users WHERE email = '${email}'
+        
         `, function(error, results) {
             if (error) {
-                res.json({error: error});
+                res.json({error: error})
             } else {
-                var new_u = results[0].latest_u + 1
-                connection.query(
-                    `
-                    INSERT INTO Users(user_id, email, region)
-                    VALUES
-                        (${new_u}, "${email}", "${region}");
-                    `, function(error, results) {
-                        if (error) {
-                            res.json({error: error})
-                        } else {
-                            console.log("User successfully created!")
-                            session.user_id = new_u
-                            session.email = email
-                            session.region = region
-                            res.json({success: true})
+                console.log(results)
+                if (results[0]) {
+                    console.log("User with email found, abort!")
+                    res.json({message: "A user with this email already exists!"})
+
+                } else {
+                    console.log("No user with email found, create acct!")
+                    // If there are noresults, we should fetch a new user_id by incrementing the max user_id from the Users table
+                    connection.query(
+                        `
+                        SELECT max(user_id) as latest_u FROM Users
+
+                        `, function(error, results) {
+                            if (error) {
+                                res.json({error: error});
+                            } else {
+                                var new_u = results[0].latest_u + 1
+                                connection.query(
+                                    `
+                                    INSERT INTO Users(user_id, email, region)
+                                    VALUES
+                                        (${new_u}, "${email}", "${region}");
+                                    `, function(error, results) {
+                                        if (error) {
+                                            res.json({error: error})
+                                        } else {
+                                            console.log("User successfully created!")
+                                            session.user_id = new_u
+                                            session.email = email
+                                            session.region = region
+                                            res.json({success: true})
+                                        }
+
+                                    }
+                                    
+                                    
+                                    
+                                )
+
+                            }
+
                         }
-
-                    }
-                    
-                    
-                    
-                )
-
+                    )
+                }
             }
-
         }
     )
+    
     
 }
 
@@ -186,7 +206,7 @@ async function friends(req, res) {
             WHERE NOT EXISTS (
                 SELECT f2_id
                 FROM Friends F
-                WHERE F.f1_id = 1 AND U.user_id = F.f2_id
+                WHERE F.f1_id = ${session.user_id} AND U.user_id = F.f2_id
             ) AND U.user_id <> ${session.user_id}
         ), non_friend_aggregates AS (
             SELECT email, AVG(energy) AS avg_energy, AVG(danceability) AS avg_dance,
@@ -365,7 +385,7 @@ async function charts(req, res) {
 
 
 /**
- * 
+ * Grab all of your routes data and second to the front end
  * 
  */
 async function wrapped(req, res) {
@@ -408,7 +428,7 @@ async function wrapped(req, res) {
                         )
                     )
                     
-                    SELECT * FROM (
+                    SELECT percent_l, percent_e, percent_d, percent_a FROM (
                         SELECT *,  PERCENT_RANK() over (ORDER BY avg_l) AS  percent_l,
                            PERCENT_RANK() over (ORDER BY avg_e) AS  percent_e,
                            PERCENT_RANK() over (ORDER BY avg_d) AS  percent_d,

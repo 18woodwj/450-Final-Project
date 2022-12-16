@@ -41,23 +41,23 @@ const regionColumns = [
 const percentileColumns = [
   {
     title: 'Loudness %',
-    dataIndex: 'avg_l',
-    key: 'avg_l',
+    dataIndex: 'percent_l',
+    key: 'percent_l',
   },
   {
     title: 'Energy %',
-    dataIndex: 'avg_e',
-    key: 'avg_e',
+    dataIndex: 'percent_e',
+    key: 'percent_e',
   },
   {
     title: 'Danceability %',
-    dataIndex: 'avg_d',
-    key: 'avg_d',    
+    dataIndex: 'percent_d',
+    key: 'percent_d',    
   },
   {
     title: 'Acousticness %',
-    dataIndex: 'avg_a',
-    key: 'avg_a',    
+    dataIndex: 'percent_a',
+    key: 'percent_a',    
   },
 
 
@@ -141,7 +141,7 @@ class WrappedPage extends React.Component {
 				tickColor: "#000000"
 			},
 			axisY2: {
-        maximum: 1.0,
+        maximum: 1.1,
 				title: "Friend comparison",
 				titleFontColor: "#000000",
 				lineColor: "#000000",
@@ -174,10 +174,10 @@ class WrappedPage extends React.Component {
 				axisYType: "secondary",
 				showInLegend: true,
 				dataPoints: [
-					{ label: "Loudness", y: (this.state.percentiles.length !== 0) ? this.state.percentiles[0].avg_l : 1 },
-					{ label: "Energy", y: (this.state.percentiles.length !== 0) ? this.state.percentiles[0].avg_e : 1 },
-					{ label: "Danceability", y: (this.state.percentiles.length !== 0) ? this.state.percentiles[0].avg_d : 1 },
-          { label: "Acousticness", y: (this.state.percentiles.length !== 0) ? this.state.percentiles[0].avg_a : 1 },
+					{ label: "Loudness", y: (this.state.percentiles.length !== 0) ? this.state.percentiles[0].percent_l : 1 },
+					{ label: "Energy", y: (this.state.percentiles.length !== 0) ? this.state.percentiles[0].percent_e : 1 },
+					{ label: "Danceability", y: (this.state.percentiles.length !== 0) ? this.state.percentiles[0].percent_d : 1 },
+          { label: "Acousticness", y: (this.state.percentiles.length !== 0) ? this.state.percentiles[0].percent_a : 1 },
 				]
 			}]
 		}
@@ -193,14 +193,17 @@ class WrappedPage extends React.Component {
       </div>
       <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3 style={{color:'green'}}>How does your taste compare to that of your friends?</h3>
+        <p>This table shows which percentile your average song attribute falls into with respect to the average song attributes of your friends</p>
         <Table class = "table-style" style={{ "border": "1px solid black" }} dataSource={this.state.percentiles} columns={percentileColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
       <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3 style={{color:'green'}}>What are some of the common characteristics of your songs?</h3>
+        <p>This table shows some of the average attribute scores of saved songs</p> 
         <Table class = "table-style" style={{ "border": "1px solid black" }} dataSource={this.state.avg_song_atr} columns={atributesColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
       <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3 style={{color:'green'}}>Who were your most featured artists?</h3>
+        <p> This table shows your three most commonly featured artists in your saved songs</p>
         <Table class = "table-style" style={{ "border": "1px solid black" }} dataSource={this.state.artists} columns={artistsColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
       <CanvasJSChart options = {options}

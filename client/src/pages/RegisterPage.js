@@ -40,8 +40,15 @@ export default function Register() {
       if (res.error) {
         console.log(res.error)
       } else {
-        console.log("Account created!");
-        // redirect to songs page here
+        if (res.message) {
+          console.log(res.message);
+        } else {
+          console.log("Account created!");
+          // redirect to songs page here
+          history.push('/songs')
+
+        }
+    
       }
       
     })
