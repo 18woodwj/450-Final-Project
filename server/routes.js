@@ -19,9 +19,7 @@ connection.connect();
 async function authenticate(req, res) {
     session = req.session
     
-    console.log("Authenticate")
     const email = req.query.email
-    console.log(email)
 
     connection.query(
         `
@@ -31,14 +29,11 @@ async function authenticate(req, res) {
                 res.json({error: error})
             } else {
                 if (results) {
-                    console.log("Email found!")
-                    console.log(results)
                     session.user_id = results[0].user_id
                     session.region = results[0].region
                     session.email = email
                     res.json({success: true, data: results})
                 } else {
-                    console.log("Email not found, create account!")
                     res.json({success: false})
                 }
                 
@@ -279,7 +274,6 @@ async function songs(req, res) {
  * 
  */
 async function charts(req, res) {
-    //TODO: Cynth
     regions = []
     t_results = []
 
@@ -352,7 +346,6 @@ async function charts(req, res) {
                                                     res.json({ error: error})
                                                 } else if (results) {
                                                     t_results.push({user_region: results});
-                                                    console.log(t_results)
                                                     res.json({ results: t_results })
                                                 }
                                             }
@@ -374,6 +367,8 @@ async function charts(req, res) {
  * 
  */
 async function wrapped(req, res) {
+    console.log("wrapped")
+    console.log(session.user_id)
     t_results = []
     connection.query(
         `SELECT SS.user_id, SUBSTRING_INDEX(S.artists, ',', 1) as main_artist, COUNT(S.id) as num FROM Saved_Songs SS
@@ -481,9 +476,6 @@ async function wrapped(req, res) {
  * 
  */
 async function saved(req, res) {
-    if (session == null) {
-        return res.redirect("/login");
-    }
 
     var curr_mood = req.query.mood;
     const happy = "AND danceability >= 0.6 AND energy >= 0.6 AND liveness >= 0.21"
