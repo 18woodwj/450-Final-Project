@@ -4,13 +4,18 @@ import React from 'react';
 import {
   Table,
   Pagination,
-  Select
+  Select,
+  Line
 } from 'antd'
 
+import CanvasJSReact from './canvasjs.react';
 import MenuBar from '../components/MenuBar';
 import { getWrapped } from '../fetcher'
 const { Column, ColumnGroup } = Table;
 const { Option } = Select;
+
+var CanvasJS = CanvasJSReact.CanvasJS;
+var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 
 const regionColumns = [
@@ -111,15 +116,71 @@ class WrappedPage extends React.Component {
   // Populate data
   componentDidMount() {
     getWrapped().then(res => {
-      this.setState({ artists: res[0].artists})
-      this.setState({ percentiles: res[1].percentiles})
-      this.setState({ avg_song_atr: res[2].avg_song_atr })
-      this.setState({ chart_regions: res[3].chart_regions })
+      this.setState({ artists: res[0].artists, percentiles: res[1].percentiles, avg_song_atr: res[2].avg_song_atr, chart_regions: res[3].chart_regions })
     })
   }
 
 
   render() {
+    const options = {
+			theme: "light1",
+			animationEnabled: true,
+			title:{
+				text: "Your habits - wrapped!"
+			},
+			axisX: {
+				title: "Listening habit"
+			},
+			axisY: {
+        maximum: 1.0,
+				title: "Common characteristics",
+				titleFontColor: "#000000",
+				lineColor: "#000000",
+				labelFontColor: "#000000",
+				tickColor: "#000000"
+			},
+			axisY2: {
+        maximum: 1.0,
+				title: "Friend comparison",
+				titleFontColor: "#000000",
+				lineColor: "#000000",
+				labelFontColor: "#000000",
+				tickColor: "000000"
+			},
+			toolTip: {
+				shared: true
+			},
+			legend: {
+				cursor: "pointer",
+				itemclick: this.toggleDataSeries
+			},
+			data: [{
+        color: "#1DB954",
+				type: "spline",
+				name: "Listening attributes",
+				showInLegend: true,
+				dataPoints: [
+					{ label: "Loudness", y: (this.state.avg_song_atr.length !== 0) ? this.state.avg_song_atr[0].avg_l : 1 },
+					{ label: "Energy", y: (this.state.avg_song_atr.length !== 0) ? this.state.avg_song_atr[0].avg_e : 1 },
+					{ label: "Danceability", y: (this.state.avg_song_atr.length !== 0) ? this.state.avg_song_atr[0].avg_d : 1 },
+          { label: "Acousticness", y: (this.state.avg_song_atr.length !== 0) ? this.state.avg_song_atr[0].avg_a : 1 },
+				]
+			},
+			{
+        color: "#0000FF",
+				type: "spline",
+				name: "Friend comparison",
+				axisYType: "secondary",
+				showInLegend: true,
+				dataPoints: [
+					{ label: "Loudness", y: (this.state.percentiles.length !== 0) ? this.state.percentiles[0].avg_l : 1 },
+					{ label: "Energy", y: (this.state.percentiles.length !== 0) ? this.state.percentiles[0].avg_e : 1 },
+					{ label: "Danceability", y: (this.state.percentiles.length !== 0) ? this.state.percentiles[0].avg_d : 1 },
+          { label: "Acousticness", y: (this.state.percentiles.length !== 0) ? this.state.percentiles[0].avg_a : 1 },
+				]
+			}]
+		}
+
 
     return (
       <div>
@@ -140,6 +201,8 @@ class WrappedPage extends React.Component {
         <h3>Who were your most featured artists?</h3>
         <Table dataSource={this.state.artists} columns={artistsColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
       </div>
+      <CanvasJSChart options = {options}
+			/>
 
 
       </div>
