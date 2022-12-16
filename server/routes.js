@@ -1,7 +1,7 @@
 const config = require('./config.json')
 const mysql = require('mysql');
 
-var session;
+var session = null;
 
 const connection = mysql.createConnection({
     host: config.rds_host,
@@ -183,6 +183,7 @@ async function friends(req, res) {
     console.log("ROUTES: friends")
     console.log(session.email)
 
+
     connection.query(`
         WITH non_friends AS (
             SELECT user_id, email
@@ -279,7 +280,6 @@ async function songs(req, res) {
  * 
  */
 async function charts(req, res) {
-    //TODO: Cynth
     regions = []
     t_results = []
 
@@ -348,7 +348,7 @@ async function charts(req, res) {
                                         connection.query(
                                             `SELECT * FROM (SELECT DISTINCT(S.name) AS song_name, S.artists
                                             FROM Songs S JOIN Charting C on S.id = C.song_id
-                                            WHERE C.region = '${req.session.user_region}'
+                                            WHERE C.region = '${session.user_region}'
                                             LIMIT 20) Wrap
                                             ORDER BY RAND();`, function(error, results, fields) {
                                                 if (error) {

@@ -9,7 +9,7 @@ import {
 } from 'antd'
 
 import MenuBar from '../components/MenuBar';
-import { getCharts } from '../fetcher'
+import { getCharts, putSong } from '../fetcher'
 const { Column, ColumnGroup } = Table;
 const { Option } = Select;
 
@@ -30,7 +30,17 @@ const chartColumns = [
     dataIndex: 'key',
     align: 'center',
     render: (text, record) => (
-     <button onClick={()=> console.log("hello")}>
+     <button onClick={()=> putSong(record.artists, record.name).then(res => {
+        if (res.error) {
+          console.log(res.error)
+        } else {
+          console.log("fuck yes");
+          // do something here to display a message on the screen
+
+
+        }
+
+     })}>
        {"+++"}
      </button>
     ),
