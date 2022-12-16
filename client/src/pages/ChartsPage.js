@@ -97,6 +97,7 @@ class ChartsPage extends React.Component {
     return (      
       <div>
         <MenuBar />
+        <Container className = "top"></Container>
         <Container className = "container-row">
           <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
             <h3 style={{color:'green'}}>Charting in your region!</h3>

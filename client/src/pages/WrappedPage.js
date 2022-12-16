@@ -186,6 +186,7 @@ class WrappedPage extends React.Component {
     return (
       <div>
         <MenuBar />
+        <Container className = "top"></Container>
       <div className = "spotify-header" style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
         <h3 style={{color:'green'}}>Just how popular were your songs?</h3>
         <Table class = "table-style" style={{ "border": "1px solid black" }} dataSource={this.state.chart_regions} columns={regionColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>

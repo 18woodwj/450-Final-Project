@@ -27,6 +27,9 @@
     align-items: center;
     justify-content: center;
     background: light gray;
+    /* padding-left: 10px;
+    padding-right: 10px;
+    padding: 10px; */
   }
 
   .container-row{
@@ -34,4 +37,8 @@
     flex-direction: row;
     align-items: flex-start;
     margin-top: 10px;
+  }
+
+  .top{
+    padding-top:35px
   }
